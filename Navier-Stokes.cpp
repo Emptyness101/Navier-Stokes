@@ -35,7 +35,7 @@
     Метод: print_cell_neighbors(int i, int j) 
     Описание: Вывод в консоль информации о соседях ячейки
 */
-#include "ColorView.h"
+#include "LayerRenderer.h"
 /* 
     В этом файле определён класс ColorView, который отвечает за визуализацию данных ячеек сетки.
     Класс предоставляет методы для создания текстур и спрайтов на основе информации из ячейки
@@ -62,11 +62,15 @@ int main()
 
     //Инициализация расчетной сетки 
     Grid grid(WIDTH, HEIGHT);
-    grid.initialize(vec2(0, 0), 0, 10, vec2(0, 0), 0, 20);
+    grid.initialize(0, 10, vec2(0, 0));
 
     //Визуализация поля
-    ColorView grid_color;
-    sf::Sprite current_view_mode = grid_color.view_rho(grid);
+    LayerRenderer layer;
+    for (int i = 0 ; i < grid.height / 2; i++)
+        for (int j = 0; j < grid.width; j++)
+            grid.cells[i*grid.width + j]->rho = i + j;
+
+    sf::Sprite current_view_mode = layer.view_rho(grid);
 
     while (window.isOpen())
     {
@@ -78,7 +82,6 @@ int main()
                 window.close();
             }
         }
-
         window.clear();
         window.draw(current_view_mode);
         window.display();

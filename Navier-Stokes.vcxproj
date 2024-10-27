@@ -135,14 +135,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Cell.cpp" />
-    <ClCompile Include="ColorView.cpp" />
+    <ClCompile Include="LayerRenderer.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="Navier-Stokes.cpp" />
     <ClCompile Include="vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cell.h" />
-    <ClInclude Include="ColorView.h" />
+    <ClInclude Include="LayerRenderer.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="vec2.h" />

@@ -5,11 +5,6 @@ Cell::Cell(vec2 pos, vec2 u, double p, double rho)
 
 Cell::~Cell() = default;
 
-std::vector<Cell*> Cell::getNeighbors() const 
-{
-    return neighbors;
-}
-
 Boundary::Boundary(vec2 pos, vec2 u, double p, double rho)
     : Cell(pos, u, p, rho) {}
 

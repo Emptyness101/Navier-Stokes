@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "Grid.h"  
 
-struct ColorView 
+struct LayerRenderer 
 {
     sf::Texture texture;
     sf::Sprite sprite;

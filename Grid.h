@@ -10,13 +10,11 @@
 struct Grid 
 {
     int width, height;
-    std::vector<std::vector<std::shared_ptr<Cell>>> cells;
+    std::vector<std::shared_ptr<Cell>> cells;
 
     Grid(int width, int height);
 
     void initialize(double initial_p, double initial_rho, vec2 velocity);
-    void initialize(vec2 velocity_left, double p_left, double rho_left,
-        vec2 velocity_right, double p_right, double rho_right);
 
     void set_neighbors();
     void print_cell_info(int i, int j) const;

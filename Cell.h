@@ -10,12 +10,10 @@ struct Cell
     double p;
     double rho;
 
-    std::vector<Cell*> neighbors{ nullptr, nullptr ,nullptr ,nullptr };
+    std::vector<Cell*> neighbors{4, nullptr};
 
     Cell(vec2 pos = vec2(), vec2 u = vec2(), double p = 0.0, double rho = 0.0);
     virtual ~Cell();
-
-    std::vector<Cell*> getNeighbors() const;
 };
 
 struct Boundary : Cell 

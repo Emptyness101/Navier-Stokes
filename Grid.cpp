@@ -1,58 +1,21 @@
 #include "Grid.h"
 
-Grid::Grid(int width, int height) : width(width), height(height) 
-{
-    cells.resize(height, std::vector<std::shared_ptr<Cell>>(width, nullptr));
-}
+Grid::Grid(int width, int height)
+    : width(width), height(height), cells(width * height, nullptr) {}
 
 void Grid::initialize(double initial_p, double initial_rho, vec2 velocity) 
 {
-
     for (int i = 0; i < height; i++) 
     {
         for (int j = 0; j < width; j++) 
         {
-            if (i == 0 || i == height - 1 || j == 0 || j == width - 1) 
+            if (i == 0 || j == 0 || j == (width - 1) || i == (height - 1)) 
             {
-                cells[i][j] = std::make_shared<Boundary>(vec2(i, j), velocity, initial_p, initial_rho);
+                cells[j + i * width] = std::make_shared<Boundary>(vec2(j, i), velocity, initial_p, initial_rho);
             }
             else 
             {
-                cells[i][j] = std::make_shared<Inner>(vec2(i, j), velocity, initial_p, initial_rho);
-            }
-        }
-    }
-    set_neighbors();
-}
-
-void Grid::initialize(vec2 velocity_left, double p_left, double rho_left,
-    vec2 velocity_right, double p_right, double rho_right) 
-{
-    for (int i = 0; i < height; i++) 
-    {
-        for (int j = 0; j < width; j++) 
-        {
-            if (j < width / 2) 
-            {
-                if (i == 0 || i == height - 1 || j == 0 || j == width - 1) 
-                {
-                    cells[i][j] = std::make_shared<Boundary>(vec2(i, j), velocity_left, p_left, rho_left);
-                }
-                else 
-                {
-                    cells[i][j] = std::make_shared<Inner>(vec2(i, j), velocity_left, p_left, rho_left);
-                }
-            }
-            else 
-            {
-                if (i == 0 || i == height - 1 || j == 0 || j == width - 1) 
-                {
-                    cells[i][j] = std::make_shared<Boundary>(vec2(i, j), velocity_right, p_right, rho_right);
-                }
-                else 
-                {
-                    cells[i][j] = std::make_shared<Inner>(vec2(i, j), velocity_right, p_right, rho_right);
-                }
+                cells[j + i * width] = std::make_shared<Inner>(vec2(j, i), velocity, initial_p, initial_rho);
             }
         }
     }
@@ -65,23 +28,23 @@ void Grid::set_neighbors()
     {
         for (int j = 0; j < width; j++) 
         {
-            auto& currentCell = cells[i][j];
+            auto& currentCell = cells[j + i * width];
             // верхний сосед
-            if (i > 0) currentCell->neighbors[0] = cells[i - 1][j].get();
+            if (i < height - 1) currentCell->neighbors[0] = cells[j + (i+1) * width].get();
             // нижний сосед
-            if (i < height - 1) currentCell->neighbors[1] = cells[i + 1][j].get();
+            if (i > 0) currentCell->neighbors[1] = cells[j + (i - 1) * width].get();
             // левый сосед 
-            if (j > 0) currentCell->neighbors[2] = cells[i][j - 1].get();
+            if (j > 0) currentCell->neighbors[2] = cells[j - 1 + i * width].get();
             // правый сосед 
-            if (j < width - 1) currentCell->neighbors[3] = cells[i][j + 1].get();
+            if (j < width - 1) currentCell->neighbors[3] = cells[j + 1 + i * width].get();
         }
     }
 }
 
-void Grid::print_cell_info(int i, int j) const 
+void Grid::print_cell_info(int i, int j) const
 {
-    std::cout << "Cell " << "(" << cells[i][j]->pos.x << ", " << cells[i][j]->pos.y << ") info { ";
-    if (dynamic_cast<Boundary*>(cells[i][j].get())) 
+    std::cout << "Cell " << "(" << cells[i + j * width]->pos.x << ", " << cells[i + j * width]->pos.y << ") info { ";
+    if (dynamic_cast<Boundary*>(cells[i + j * width].get()))
     {
         std::cout << "| Boundary";
     }
@@ -89,7 +52,7 @@ void Grid::print_cell_info(int i, int j) const
     {
         std::cout << "| Inner";
     }
-    std::cout << "| rho: " << cells[i][j]->rho << "| vx: " << cells[i][j]->u.x << "| vy: " << cells[i][j]->u.y << "| }";
+    std::cout << "| rho: " << cells[i + j * width]->rho << "| vx: " << cells[i + j * width]->u.x << "| vy: " << cells[i + j * width]->u.y << "| }";
     std::cout << std::endl;
 }
 
@@ -97,7 +60,7 @@ void Grid::print_cell_neighbors(int i, int j) const
 {
     if (i >= 0 && i < height && j >= 0 && j < width) 
     {
-        std::vector<Cell*> neighbors = cells[i][j]->getNeighbors();
+        std::vector<Cell*> neighbors = cells[i + j * width]->neighbors;
         std::cout << "Cell " << "(" << i << ", " << j << ") neighbors { ";
         for (Cell* neighbor : neighbors) 
         {

@@ -1,10 +1,10 @@
-#include "ColorView.h"
+#include "LayerRenderer.h"
 #include <limits>
 
-sf::Sprite ColorView::view_rho(const Grid& grid) 
+sf::Sprite LayerRenderer::view_rho(const Grid& grid)
 {
-    int FIELD_WIDTH = grid.cells.size();
-    int FIELD_HEIGHT = grid.cells[0].size();
+    int FIELD_WIDTH = grid.width;
+    int FIELD_HEIGHT = grid.height;
 
     std::vector<sf::Uint8> pixelBuffer(FIELD_WIDTH * FIELD_HEIGHT * 4);
     texture.create(FIELD_WIDTH, FIELD_HEIGHT);
@@ -14,11 +14,11 @@ sf::Sprite ColorView::view_rho(const Grid& grid)
     double max_data = std::numeric_limits<double>::lowest();
     double min_data = std::numeric_limits<double>::max();
 
-    for (const auto& row : grid.cells) 
+    for (int i = 0; i < FIELD_HEIGHT; i++)
     {
-        for (const auto& cell : row) 
+        for (int j = 0; j < FIELD_WIDTH; j++)
         {
-            double data = cell->rho;
+            double data = grid.cells[j + i * grid.width]->rho;
             if (data > max_data) max_data = data;
             if (data < min_data) min_data = data;
         }
@@ -28,8 +28,9 @@ sf::Sprite ColorView::view_rho(const Grid& grid)
     {
         for (int j = 0; j < FIELD_WIDTH; j++) 
         {
-            int pixelIndex = (i * FIELD_WIDTH + j) * 4;
-            double data = grid.cells[i][j]->rho;
+            int pixelIndex = ((FIELD_HEIGHT - 1 - i) * FIELD_WIDTH + j) * 4;
+
+            double data = grid.cells[j + i * grid.width]->rho;
 
             if (data < min_data) data = min_data;
             if (data > max_data) data = max_data;
