@@ -76,3 +76,53 @@ void Grid::print_cell_neighbors(int i, int j) const
         std::cout << "}" << std::endl;
     }
 }
+
+void Grid::to_file_scalar_field(std::string outputpath , FieldType type) const
+{
+    std::ofstream output;          
+    output.open(outputpath);
+    if (output.is_open())
+    {
+        for (int i = 0; i < height; i++)
+        {
+            for (int j = 0; j < width; j++)
+            {
+                int pixelIndex = ((height - 1 - i) * width + j);
+                if (type == Pressure)
+                {
+                    output << cells[pixelIndex]->p << " ";
+                }
+                if (type == Density)
+                {
+                    output << cells[pixelIndex]->rho << " ";
+                }
+            }
+            output << std::endl;
+        }
+    }
+
+}
+
+void Grid::to_file_vector_field(std::string outputpath, FieldType type) const
+{
+    std::ofstream output;
+    output.open(outputpath);
+    if (output.is_open())
+    {
+        for (int i = 0; i < height; i++)
+        {
+            for (int j = 0; j < width; j++)
+            {
+                int pixelIndex = ((height - 1 - i) * width + j);
+                if (type == Velocity)
+                {
+                    output <<"{"<< cells[pixelIndex]->u.x << "," << cells[pixelIndex]->u.y << "} ";
+                }
+            }
+            output << std::endl;
+        }
+    }
+
+}
+
+

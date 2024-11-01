@@ -3,9 +3,17 @@
 #include <vector>
 #include <memory>
 #include <iostream>
+#include <fstream>
 
 #include "Cell.h"  
 #include "vec2.h"  
+
+enum FieldType 
+{
+    Velocity,
+    Pressure,
+    Density
+};
 
 struct Grid 
 {
@@ -19,4 +27,7 @@ struct Grid
     void set_neighbors();
     void print_cell_info(int i, int j) const;
     void print_cell_neighbors(int i, int j) const;
+    void to_file_scalar_field(std::string, FieldType) const;
+    void to_file_vector_field(std::string, FieldType) const;
+
 };
