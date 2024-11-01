@@ -30,13 +30,13 @@ void Grid::set_neighbors()
         {
             auto& currentCell = cells[j + i * width];
             // верхний сосед
-            if (i < height - 1) currentCell->neighbors[0] = cells[j + (i+1) * width].get();
+            if (i < height - 1) currentCell->neighbors[1] = cells[j + (i+1) * width].get();
             // нижний сосед
-            if (i > 0) currentCell->neighbors[1] = cells[j + (i - 1) * width].get();
+            if (i > 0) currentCell->neighbors[3] = cells[j + (i - 1) * width].get();
             // левый сосед 
-            if (j > 0) currentCell->neighbors[2] = cells[j - 1 + i * width].get();
+            if (j > 0) currentCell->neighbors[0] = cells[j - 1 + i * width].get();
             // правый сосед 
-            if (j < width - 1) currentCell->neighbors[3] = cells[j + 1 + i * width].get();
+            if (j < width - 1) currentCell->neighbors[2] = cells[j + 1 + i * width].get();
         }
     }
 }

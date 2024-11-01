@@ -56,6 +56,22 @@ const int WIDTH  = 500;
 // Высота расчетной области
 const int HEIGHT = 500;
 
+//TODO
+/*
+* формулы 
+* grid::setforce vector <vec2> f ---> grid 
+* load from file
+* mouse gauss kernel (в центре с радиусом задаем мышкой) и размываем по гауссу в сторону движения мышки
+* посмотреть библиотеки для векторных вычислений, cpp boost
+* const to h.file
+* мастабирвоание ячеек
+* 
+* const:
+* физ длина ширина
+* колво пикселей
+* кол-во ячеек верх низ
+*/
+
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "SFML works!");
