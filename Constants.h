@@ -5,8 +5,8 @@ const int WINDOW_WIDTH	= 500;
 const int WINDOW_HEIGHT = 500;
 
 // Ўирина и высота расчетной области
-const int FIELD_WIDTH  = 50;
-const int FIELD_HEIGHT = 50;
+const int FIELD_WIDTH  = 100;
+const int FIELD_HEIGHT = 100;
 
 // Ўирина и высота €чейки
 const float CELL_WIDTH  = WINDOW_WIDTH / FIELD_WIDTH;

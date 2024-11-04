@@ -1,5 +1,8 @@
-﻿#include <iostream>
+﻿#define _USE_MATH_DEFINES
+
+#include <iostream>
 #include <vector>
+#include <cmath>
 
 #include "SFML/Graphics.hpp"
 
@@ -65,7 +68,7 @@ int main()
 
                         if (distance <= brush_radius * brush_radius)
                         {
-                            float weight = std::exp(-distance / (2 * sigma * sigma)); // 1/sigma*sqrt(6.28) useless!
+                            float weight = 1 / (sigma * sqrt(2 * M_PI)) * std::exp(-distance / (2 * sigma * sigma));
                             int cell_index = (FIELD_HEIGHT - 1 - y) * FIELD_WIDTH + x;
                             layer.get_layer_data(*grid.cells[cell_index], current_layer) += brush_power * weight;
                         }
