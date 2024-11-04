@@ -6,14 +6,8 @@
 #include <fstream>
 
 #include "Cell.h"  
-#include "vec2.h"  
-
-enum FieldType 
-{
-    Velocity,
-    Pressure,
-    Density
-};
+#include "vec2.h" 
+#include "Constants.h"
 
 struct Grid 
 {

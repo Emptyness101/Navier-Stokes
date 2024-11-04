@@ -29,14 +29,14 @@ void Grid::set_neighbors()
         for (int j = 0; j < width; j++) 
         {
             auto& currentCell = cells[j + i * width];
-            // верхний сосед
-            if (i < height - 1) currentCell->neighbors[1] = cells[j + (i+1) * width].get();
-            // нижний сосед
-            if (i > 0) currentCell->neighbors[3] = cells[j + (i - 1) * width].get();
-            // левый сосед 
+            // left neighbor
             if (j > 0) currentCell->neighbors[0] = cells[j - 1 + i * width].get();
-            // правый сосед 
+            // upper neighbor
+            if (i < height - 1) currentCell->neighbors[1] = cells[j + (i+1) * width].get();
+            // right neighbor 
             if (j < width - 1) currentCell->neighbors[2] = cells[j + 1 + i * width].get();
+            // lower neighbor
+            if (i > 0) currentCell->neighbors[3] = cells[j + (i - 1) * width].get();
         }
     }
 }
