@@ -6,19 +6,17 @@
 
 #include "SFML/Graphics.hpp"
 
-#include "vec2.h"
 #include "Constants.h"
-
+#include "vec2.h"
 #include "Cell.h"
 #include "Grid.h"
+#include "Brush.h"
 #include "LayerRenderer.h"
 
 //TODO
 /*
 * формулы 
-* grid::setforce vector <vec2> f ---> grid 
-* load from file
-* посмотреть библиотеки для векторных вычислений, cpp boost
+* посмотреть библиотеки для векторных вычислений, cpp boost (ublas)
 */
 
 int main()
@@ -32,8 +30,7 @@ int main()
     FieldType current_layer = DEFAULT_FIELDTYPE;
     sf::Sprite current_view_layer = layer.view_layer(grid, current_layer);
 
-    int brush_radius  = DEFAULT_BRUSH_RADIUS;
-    float brush_power = DEFAULT_BRUSH_POWER;
+    Brush brush(DEFAULT_BRUSH_RADIUS, DEFAULT_BRUSH_POWER);
 
     while (window.isOpen())
     {
@@ -48,46 +45,24 @@ int main()
             {
                 std::cout << "Window has been resized!" << std::endl;
             }
-
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
             {
-                int mouse_cell_y = sf::Mouse::getPosition(window).y / CELL_WIDTH;
-                int mouse_cell_x = sf::Mouse::getPosition(window).x / CELL_HEIGHT;
-
-                float sigma = brush_radius / 2.0;
-
-                for (int dy = -brush_radius; dy <= brush_radius; dy++)
-                {
-                    for (int dx = -brush_radius; dx <= brush_radius; dx++)
-                    {
-                        int y = mouse_cell_y + dy;
-                        int x = mouse_cell_x + dx;
-                        float distance = dx * dx + dy * dy;
-
-                        if (x < 0 || x >= FIELD_WIDTH || y < 0 || y >= FIELD_HEIGHT) continue;
-
-                        if (distance <= brush_radius * brush_radius)
-                        {
-                            float weight = 1 / (sigma * sqrt(2 * M_PI)) * std::exp(-distance / (2 * sigma * sigma));
-                            int cell_index = (FIELD_HEIGHT - 1 - y) * FIELD_WIDTH + x;
-                            layer.get_layer_data(*grid.cells[cell_index], current_layer) += brush_power * weight;
-                        }
-                    }
-                }
+                int mouse_cell_y = sf::Mouse::getPosition(window).y / PIXEL_CELL_WIDTH;
+                int mouse_cell_x = sf::Mouse::getPosition(window).x / PIXEL_CELL_HEIGHT;
+                brush.gauss_brush(grid, current_layer, mouse_cell_x, mouse_cell_y);
                 layer.view_layer(grid, current_layer);
-                brush_power = std::max(0.f, brush_power - BRUSH_ATTENUATION_RATE);
             }
             if (event.type == sf::Event::MouseButtonReleased)
             {
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
-                    brush_power = DEFAULT_BRUSH_POWER;
+                    brush.brush_power = DEFAULT_BRUSH_POWER;
                 }
             }
             if (event.type == sf::Event::MouseWheelScrolled)
             {
-                brush_radius += event.mouseWheelScroll.delta;
-                brush_radius = std::max(1, brush_radius); 
+                brush.brush_radius += event.mouseWheelScroll.delta;
+                brush.brush_radius = std::max(1, brush.brush_radius);
             }
         }
         window.clear();

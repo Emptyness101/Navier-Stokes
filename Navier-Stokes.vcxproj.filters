@@ -30,6 +30,12 @@
     <ClCompile Include="LayerRenderer.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="DifferentialOperators.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Brush.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -49,6 +55,12 @@
     </ClInclude>
     <ClInclude Include="Constants.h">
       <Filter>Исходные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="DifferentialOperators.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Brush.h">
+      <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -41,6 +41,57 @@ void Grid::set_neighbors()
     }
 }
 
+double& Grid::get_field_data(Cell& cell, FieldType field_type)
+{
+    switch (field_type)
+    {
+    case FieldType::Pressure:
+        return cell.p;
+    case FieldType::Density:
+        return cell.rho;
+    case FieldType::XVelocity:
+        return cell.u.x;
+    case FieldType::YVelocity:
+        return cell.u.y;
+    default:
+        throw std::invalid_argument("layer type error");
+    }
+}
+
+void Grid::file_set_force(std::string input_path, FieldType input_data_type)
+{
+    std::ifstream input(input_path); 
+
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            int pixelIndex = ((height - 1 - i) * width + j);
+            char openBrace, comma, closeBrace;
+            switch (input_data_type) {
+            case Velocity:
+                input >> openBrace >> cells[pixelIndex]->u.x >> comma >> cells[pixelIndex]->u.y >> closeBrace;
+                break;
+            case XVelocity:
+                input >> cells[pixelIndex]->u.x;
+                break;
+            case YVelocity:
+                input >> cells[pixelIndex]->u.y;
+                break;
+            case Pressure:
+                input >> cells[pixelIndex]->p;
+                break;
+            case Density:
+                input >> cells[pixelIndex]->rho;
+                break;
+            default:
+                break;
+            }
+        }
+    }
+}
+
+
 void Grid::print_cell_info(int i, int j) const
 {
     std::cout << "Cell " << "(" << cells[i + j * width]->pos.x << ", " << cells[i + j * width]->pos.y << ") info { ";
@@ -113,6 +164,7 @@ void Grid::to_file_field(std::string outputpath , FieldType type) const
         }
     }
 }
+
 
 
 

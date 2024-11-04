@@ -1,23 +1,6 @@
 #include "LayerRenderer.h"
 
-double& LayerRenderer::get_layer_data(Cell& cell, FieldType layerType)
-{
-    switch (layerType) 
-    {
-    case FieldType::Pressure:
-        return cell.p;
-    case FieldType::Density:
-        return cell.rho;
-    case FieldType::XVelocity:
-        return cell.u.x; 
-    case FieldType::YVelocity:
-        return cell.u.y; 
-    default:
-        throw std::invalid_argument("layer type error");
-    }
-}
-
-sf::Sprite LayerRenderer::view_layer(const Grid& grid, FieldType layerType)
+sf::Sprite LayerRenderer::view_layer(Grid& grid, FieldType layerType)
 {
     double max_data = std::numeric_limits<double>::lowest();
     double min_data = std::numeric_limits<double>::max();
@@ -26,7 +9,7 @@ sf::Sprite LayerRenderer::view_layer(const Grid& grid, FieldType layerType)
     {
         for (int j = 0; j < FIELD_WIDTH; j++)
         {
-            double data = get_layer_data(*grid.cells[j + i * grid.width], layerType);
+            double data = grid.get_field_data(*grid.cells[j + i * grid.width], layerType);
             max_data = std::max(max_data, data);
             min_data = std::min(min_data, data);
         }
@@ -38,7 +21,7 @@ sf::Sprite LayerRenderer::view_layer(const Grid& grid, FieldType layerType)
         {
             int pixelIndex = ((FIELD_HEIGHT - 1 - i) * FIELD_WIDTH + j) * 4;
 
-            double data = get_layer_data(*grid.cells[j + i * grid.width], layerType);
+            double data = grid.get_field_data(*grid.cells[j + i * grid.width], layerType);
             data = std::clamp(data, min_data, max_data);
             double dv = max_data - min_data;
 
