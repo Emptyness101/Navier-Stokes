@@ -88,25 +88,25 @@ void Grid::to_file_field(std::string outputpath , FieldType type) const
             for (int j = 0; j < width; j++)
             {
                 int pixelIndex = ((height - 1 - i) * width + j);
-                if (type == Pressure)
-                {
-                    output << cells[pixelIndex]->p << " ";
-                }
-                if (type == Density)
-                {
-                    output << cells[pixelIndex]->rho << " ";
-                }
-                if (type == XVelocity)
-                {
-                    output << cells[pixelIndex]->u.x << " ";
-                }
-                if (type == YVelocity)
-                {
-                    output << cells[pixelIndex]->u.y << " ";
-                }
-                if (type == Velocity)
-                {
+
+                switch (type) {
+                case Velocity:
                     output << "{" << cells[pixelIndex]->u.x << "," << cells[pixelIndex]->u.y << "} ";
+                    break;
+                case XVelocity:
+                    output << cells[pixelIndex]->u.x << " ";
+                    break;
+                case YVelocity:
+                    output << cells[pixelIndex]->u.y << " ";
+                    break;
+                case Pressure:
+                    output << cells[pixelIndex]->p << " ";
+                    break;
+                case Density:
+                    output << cells[pixelIndex]->rho << " ";
+                    break;
+                default:
+                    break;
                 }
             }
             output << std::endl;
