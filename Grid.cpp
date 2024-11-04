@@ -29,13 +29,13 @@ void Grid::set_neighbors()
         for (int j = 0; j < width; j++) 
         {
             auto& currentCell = cells[j + i * width];
-            // left neighbor
+            // Left neighbor
             if (j > 0) currentCell->neighbors[0] = cells[j - 1 + i * width].get();
-            // upper neighbor
+            // Upper neighbor
             if (i < height - 1) currentCell->neighbors[1] = cells[j + (i+1) * width].get();
-            // right neighbor 
+            // Right neighbor 
             if (j < width - 1) currentCell->neighbors[2] = cells[j + 1 + i * width].get();
-            // lower neighbor
+            // Lower neighbor
             if (i > 0) currentCell->neighbors[3] = cells[j + (i - 1) * width].get();
         }
     }
@@ -90,7 +90,6 @@ void Grid::file_set_force(std::string input_path, FieldType input_data_type)
         }
     }
 }
-
 
 void Grid::print_cell_info(int i, int j) const
 {
@@ -164,7 +163,3 @@ void Grid::to_file_field(std::string outputpath , FieldType type) const
         }
     }
 }
-
-
-
-
