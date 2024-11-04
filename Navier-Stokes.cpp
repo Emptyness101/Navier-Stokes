@@ -87,7 +87,7 @@ int main()
             if (event.type == sf::Event::MouseWheelScrolled)
             {
                 brush_radius += event.mouseWheelScroll.delta;
-                brush_radius = std::max(0, brush_radius); // BUG: if radius is 0 then infinite paint 
+                brush_radius = std::max(1, brush_radius); 
             }
         }
         window.clear();
