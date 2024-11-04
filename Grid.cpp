@@ -77,7 +77,7 @@ void Grid::print_cell_neighbors(int i, int j) const
     }
 }
 
-void Grid::to_file_scalar_field(std::string outputpath , FieldType type) const
+void Grid::to_file_field(std::string outputpath , FieldType type) const
 {
     std::ofstream output;          
     output.open(outputpath);
@@ -96,33 +96,23 @@ void Grid::to_file_scalar_field(std::string outputpath , FieldType type) const
                 {
                     output << cells[pixelIndex]->rho << " ";
                 }
-            }
-            output << std::endl;
-        }
-    }
-
-}
-
-void Grid::to_file_vector_field(std::string outputpath, FieldType type) const
-{
-    std::ofstream output;
-    output.open(outputpath);
-    if (output.is_open())
-    {
-        for (int i = 0; i < height; i++)
-        {
-            for (int j = 0; j < width; j++)
-            {
-                int pixelIndex = ((height - 1 - i) * width + j);
+                if (type == XVelocity)
+                {
+                    output << cells[pixelIndex]->u.x << " ";
+                }
+                if (type == YVelocity)
+                {
+                    output << cells[pixelIndex]->u.y << " ";
+                }
                 if (type == Velocity)
                 {
-                    output <<"{"<< cells[pixelIndex]->u.x << "," << cells[pixelIndex]->u.y << "} ";
+                    output << "{" << cells[pixelIndex]->u.x << "," << cells[pixelIndex]->u.y << "} ";
                 }
             }
             output << std::endl;
         }
     }
-
 }
+
 
 
