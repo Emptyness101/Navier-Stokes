@@ -25,3 +25,5 @@ enum FieldType
     Pressure,
     Density
 };
+
+const FieldType DEFAULT_FIELDTYPE = Density;

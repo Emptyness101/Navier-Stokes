@@ -26,7 +26,7 @@ int main()
     grid.initialize(0, 10, vec2(0, 0));
 
     LayerRenderer layer;
-    FieldType current_layer = Density;
+    FieldType current_layer = DEFAULT_FIELDTYPE;
     sf::Sprite current_view_layer = layer.view_layer(grid, current_layer);
 
     int brush_radius  = DEFAULT_BRUSH_RADIUS;
