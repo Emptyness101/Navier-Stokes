@@ -10,10 +10,10 @@
 
 struct Brush
 {
-	int brush_radius;
-	float brush_power;
+	int radius;
+	float power;
 
-	Brush(int brush_radius, float brush_power);
+	Brush(int radius, float power);
 	void gauss_brush(Grid& grid_data, FieldType current_layer, float mouse_cell_x, float mouse_cell_y);
 };
 

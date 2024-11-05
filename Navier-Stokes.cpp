@@ -12,7 +12,7 @@
 #include "Grid.h"
 #include "Brush.h"
 #include "LayerRenderer.h"
-
+#include "DifferentialOperators.h"
 //TODO
 /*
 * формулы 
@@ -25,6 +25,43 @@ int main()
 
     Grid grid(FIELD_WIDTH, FIELD_HEIGHT);
     grid.initialize(0, 10, vec2(0, 0));
+    DifferentialOperators dop;
+    
+    for (int i = 0; i < FIELD_HEIGHT; i++)
+    {
+        for (int j = 0; j < FIELD_WIDTH; j++)
+        {
+            int pixelIndex = ((FIELD_HEIGHT - 1 - i) * FIELD_WIDTH + j);
+
+            grid.cells[pixelIndex]->rho = 50;
+
+        }
+    }
+
+    for (int i = 0; i < FIELD_HEIGHT; i++)
+    {
+        for (int j = FIELD_WIDTH/2; j < FIELD_WIDTH; j++)
+        {
+            int pixelIndex = ((FIELD_HEIGHT - 1 - i) * FIELD_WIDTH + j);
+
+            grid.cells[pixelIndex]->rho = 100;
+
+        }
+    }
+
+    for (int i = 0; i < FIELD_HEIGHT; i++)
+    {
+        for (int j = 0; j < FIELD_WIDTH; j++)
+        {
+            int pixelIndex = ((FIELD_HEIGHT - 1 - i) * FIELD_WIDTH + j);
+            if (dynamic_cast<Inner*>(grid.cells[pixelIndex].get()))
+                grid.cells[pixelIndex]->rho = hypot(dop.grad_d(*grid.cells[pixelIndex]).y, dop.grad_d(*grid.cells[pixelIndex]).x);
+        }
+    }
+
+    grid.to_file_field("tets.txt", Density);
+    std::cout << grid.cells[((FIELD_HEIGHT - 1 - FIELD_HEIGHT/2) * FIELD_WIDTH + FIELD_WIDTH/2)]->rho;
+
 
     LayerRenderer layer;
     FieldType current_layer = DEFAULT_FIELDTYPE;
@@ -37,7 +74,7 @@ int main()
         sf::Event event;
         while (window.pollEvent(event))
         {
-            if (event.type == sf::Event::Closed)
+            if (event.type == sf::Event::Closed) 
             {
                 window.close();
             }
@@ -56,13 +93,13 @@ int main()
             {
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
-                    brush.brush_power = DEFAULT_BRUSH_POWER;
+                    brush.power = DEFAULT_BRUSH_POWER;
                 }
             }
             if (event.type == sf::Event::MouseWheelScrolled)
             {
-                brush.brush_radius += event.mouseWheelScroll.delta;
-                brush.brush_radius = std::max(1, brush.brush_radius);
+                brush.radius += event.mouseWheelScroll.delta;
+                brush.radius = std::max(1, brush.radius);
             }
         }
         window.clear();

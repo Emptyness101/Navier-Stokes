@@ -45,13 +45,13 @@ double& Grid::get_field_data(Cell& cell, FieldType field_type)
 {
     switch (field_type)
     {
-    case FieldType::Pressure:
+    case Pressure:
         return cell.p;
-    case FieldType::Density:
+    case Density:
         return cell.rho;
-    case FieldType::XVelocity:
+    case XVelocity:
         return cell.u.x;
-    case FieldType::YVelocity:
+    case YVelocity:
         return cell.u.y;
     default:
         throw std::invalid_argument("layer type error");

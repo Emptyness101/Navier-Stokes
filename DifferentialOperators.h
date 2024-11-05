@@ -7,9 +7,12 @@
 
 struct DifferentialOperators
 {
-	vec2 grad(Cell& cell, FieldType);
-	double div(Cell& cell, FieldType);
-	double rot(Cell& cell, FieldType);
-	double lap(Cell& cell, FieldType);
+	vec2 grad_v(Cell& cell);
+	vec2 grad_p(Cell& cell);
+	vec2 grad_d(Cell& cell);
+	double div_v(Cell& cell);
+	double rot_v(Cell& cell);
+	double lap_v(Cell& cell);
+	double lap_p(Cell& cell);
 };
 
