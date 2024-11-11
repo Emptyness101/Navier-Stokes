@@ -19,6 +19,13 @@
 * посмотреть библиотеки для векторных вычислений, cpp boost (ublas)
 */
 
+/*
+* для внешних добавить поле направление 0 1 2 3 разные разностные схемы для каждой грани 
+* в cell поле для div grad и тд
+* в целл есть ро и град тогда из грида берем ро и кладем в град (который в целл)
+* форс кисти возращает вектор!!!
+*/
+
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
@@ -49,19 +56,10 @@ int main()
         }
     }
 
-    for (int i = 0; i < FIELD_HEIGHT; i++)
-    {
-        for (int j = 0; j < FIELD_WIDTH; j++)
-        {
-            int pixelIndex = ((FIELD_HEIGHT - 1 - i) * FIELD_WIDTH + j);
-            if (dynamic_cast<Inner*>(grid.cells[pixelIndex].get()))
-                grid.cells[pixelIndex]->rho = hypot(dop.grad_d(*grid.cells[pixelIndex]).y, dop.grad_d(*grid.cells[pixelIndex]).x);
-        }
-    }
+
 
     grid.to_file_field("tets.txt", Density);
     std::cout << grid.cells[((FIELD_HEIGHT - 1 - FIELD_HEIGHT/2) * FIELD_WIDTH + FIELD_WIDTH/2)]->rho;
-
 
     LayerRenderer layer;
     FieldType current_layer = DEFAULT_FIELDTYPE;

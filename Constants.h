@@ -5,8 +5,8 @@ const int WINDOW_WIDTH	= 1000;
 const int WINDOW_HEIGHT = 1000;
 
 // Field height and width in pixels
-const int FIELD_WIDTH  = 50;
-const int FIELD_HEIGHT = 50;
+const int FIELD_WIDTH  = 200;
+const int FIELD_HEIGHT = 200;
 
 // Cell height and width in pixels
 const float PIXEL_CELL_WIDTH  = WINDOW_WIDTH / FIELD_WIDTH;
