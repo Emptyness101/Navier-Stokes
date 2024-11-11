@@ -1,11 +1,9 @@
 #include "DifferentialOperators.h"
 
-vec2 DifferentialOperators::grad_v(Cell& cell)
+void DifferentialOperators::grad_v(Cell& cell)
 {
-	vec2 result;
-	result.x = (cell.neighbors[2]->u.x - cell.neighbors[0]->u.x) / (2 * PHYS_CELL_WIDTH);
-	result.y = (cell.neighbors[1]->u.y - cell.neighbors[3]->u.y) / (2 * PHYS_CELL_HEIGHT);
-	return result;
+	cell.grad.x = (cell.neighbors[2]->u.x - cell.neighbors[0]->u.x) / (2 * PHYS_CELL_WIDTH);
+	cell.grad.y = (cell.neighbors[1]->u.y - cell.neighbors[3]->u.y) / (2 * PHYS_CELL_HEIGHT);
 }
 
 vec2 DifferentialOperators::grad_p(Cell& cell)

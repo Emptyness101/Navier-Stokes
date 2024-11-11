@@ -40,7 +40,7 @@ int main()
         {
             int pixelIndex = ((FIELD_HEIGHT - 1 - i) * FIELD_WIDTH + j);
 
-            grid.cells[pixelIndex]->rho = 50;
+            grid.cells[pixelIndex]->u.x = 50;
 
         }
     }
@@ -51,11 +51,22 @@ int main()
         {
             int pixelIndex = ((FIELD_HEIGHT - 1 - i) * FIELD_WIDTH + j);
 
-            grid.cells[pixelIndex]->rho = 100;
+            grid.cells[pixelIndex]->u.x = 100;
 
         }
     }
 
+    for (int i = 0; i < FIELD_HEIGHT; i++)
+    {
+        for (int j = 0; j < FIELD_WIDTH; j++)
+        {
+            int pixelIndex = ((FIELD_HEIGHT - 1 - i) * FIELD_WIDTH + j);
+
+            grid.cells[pixelIndex]->calcgrad();
+            
+            grid.cells[pixelIndex]->rho = grid.cells[pixelIndex]->grad.x;
+        }
+    }
 
 
     grid.to_file_field("tets.txt", Density);

@@ -11,11 +11,11 @@ void Grid::initialize(double initial_p, double initial_rho, vec2 velocity)
         {
             if (i == 0 || j == 0 || j == (width - 1) || i == (height - 1)) 
             {
-                cells[j + i * width] = std::make_shared<Boundary>(vec2(j, i), velocity, initial_p, initial_rho);
+                cells[j + i * width] = std::make_shared<Boundary>(vec2(j, i), velocity, initial_p, initial_rho, vec2(0,0));
             }
             else 
             {
-                cells[j + i * width] = std::make_shared<Inner>(vec2(j, i), velocity, initial_p, initial_rho);
+                cells[j + i * width] = std::make_shared<Inner>(vec2(j, i), velocity, initial_p, initial_rho, vec2(0, 0));
             }
         }
     }

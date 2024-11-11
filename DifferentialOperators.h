@@ -7,7 +7,7 @@
 
 struct DifferentialOperators
 {
-	vec2 grad_v(Cell& cell);
+	void grad_v(Cell& cell);
 	vec2 grad_p(Cell& cell);
 	vec2 grad_d(Cell& cell);
 	double div_v(Cell& cell);
