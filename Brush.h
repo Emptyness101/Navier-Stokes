@@ -14,6 +14,7 @@ struct Brush
 	float power;
 
 	Brush(int radius, float power);
-	void gauss_brush(Grid& grid_data, FieldType current_layer, float mouse_cell_x, float mouse_cell_y);
+	vec2 gauss_brush(float current_mouse_cell_x, float current_mouse_cell_y,
+		float start_mouse_cell_x, float start_mouse_cell_y);
 };
 

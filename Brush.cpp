@@ -2,27 +2,22 @@
 
 Brush::Brush(int brush_radius, float brush_power) : radius(brush_radius), power(brush_power) {};
 
-void Brush::gauss_brush(Grid& grid_data, FieldType current_layer, float mouse_cell_x, float mouse_cell_y)
+vec2 Brush::gauss_brush(float current_mouse_cell_x, float current_mouse_cell_y,
+                        float start_mouse_cell_x, float start_mouse_cell_y)
 {
+    float dx = current_mouse_cell_x - start_mouse_cell_x;
+    float dy = current_mouse_cell_y - start_mouse_cell_y;
+    float distance = dx * dx + dy * dy;
     float sigma = radius / 2.0;
+    vec2 force = vec2(0, 0);
 
-    for (int dy = -radius; dy <= radius; dy++)
-    {
-        for (int dx = -radius; dx <= radius; dx++)
-        {
-            int y = mouse_cell_y + dy;
-            int x = mouse_cell_x + dx;
-            float distance = dx * dx + dy * dy;
+    vec2 impulse = vec2(abs(dx), abs(dy));
 
-            if (x < 0 || x >= FIELD_WIDTH || y < 0 || y >= FIELD_HEIGHT) continue;
+    float weight = 1 / (sigma * sqrt(2 * M_PI)) * std::exp(-distance / (2 * sigma * sigma));
 
-            if (distance <= radius * radius)
-            {
-                float weight = 1 / (sigma * sqrt(2 * M_PI)) * std::exp(-distance / (2 * sigma * sigma));
-                int cell_index = (FIELD_HEIGHT - 1 - y) * FIELD_WIDTH + x;
-                grid_data.get_field_data(*grid_data.cells[cell_index], current_layer) += power * weight;
-            }
-        }
-    }
+    force = impulse * weight * power;
+
     power = std::max(0.f, power - BRUSH_ATTENUATION_RATE);
+
+    return force;
 }

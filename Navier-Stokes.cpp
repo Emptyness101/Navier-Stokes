@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <cstring>
 
 #include "SFML/Graphics.hpp"
 
@@ -12,104 +13,89 @@
 #include "Grid.h"
 #include "Brush.h"
 #include "LayerRenderer.h"
+#include "Solver.h"
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
+	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
+	window.setVerticalSyncEnabled(true);
 
-    Grid grid(FIELD_WIDTH, FIELD_HEIGHT);
-    grid.initialize(0, 10, vec2(0, 0));
-    
-    for (int i = 0; i < FIELD_HEIGHT; i++)
-    {
-        for (int j = 0; j < FIELD_WIDTH; j++)
-        {
-            int pixelIndex = ((FIELD_HEIGHT - 1 - i) * FIELD_WIDTH + j);
+	Grid grid(FIELD_WIDTH, FIELD_HEIGHT);
+	grid.initialize(0, 10, vec2(0, 0));
 
-            grid.cells[pixelIndex]->u.x = 50;
-            grid.cells[pixelIndex]->u.y = 25;
+	grid.to_file_field("tets.txt", Density);
 
-        }
-    }
+	Solver solver;
+	LayerRenderer layer;
+	FieldType current_layer = DEFAULT_FIELDTYPE;
+	sf::Sprite current_view_layer = layer.view_layer(grid, current_layer);
 
-    for (int i = 0; i < FIELD_HEIGHT; i++)
-    {
-        for (int j = FIELD_WIDTH/2; j < FIELD_WIDTH; j++)
-        {
-            int pixelIndex = ((FIELD_HEIGHT - 1 - i) * FIELD_WIDTH + j);
+	Brush brush(DEFAULT_BRUSH_RADIUS, DEFAULT_BRUSH_POWER);
+	int start_mouse_cell_y = 0;
+	int start_mouse_cell_x = 0;
+	int current_mouse_cell_x = 0;
+	int current_mouse_cell_y = 0;
 
-            grid.cells[pixelIndex]->u.x = 100;
-            grid.cells[pixelIndex]->u.y = 100;
+	float current_time = 0;
 
-        }
-    }
+	while (window.isOpen())
+	{
+		sf::Event event;
 
-    for (int i = 0; i < FIELD_HEIGHT; i++)
-    {
-        for (int j = 0; j < FIELD_WIDTH; j++)
-        {
-            int pixelIndex = ((FIELD_HEIGHT - 1 - i) * FIELD_WIDTH + j);
+		while (window.pollEvent(event))
+		{
+			if (event.type == sf::Event::Closed)
+			{
+				window.close();
+			}
+			if (event.type == sf::Event::Resized)
+			{
+				std::cout << "Window has been resized!" << std::endl;
+			}
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			{
+				if (event.mouseButton.button == sf::Mouse::Button::Left)
+				{
+					start_mouse_cell_y = sf::Mouse::getPosition(window).y / PIXEL_CELL_WIDTH;
+					start_mouse_cell_x = sf::Mouse::getPosition(window).x / PIXEL_CELL_HEIGHT;
+				}
 
-                grid.cells[pixelIndex]->calc_div_u();
-        }
-    }
+				current_mouse_cell_y = sf::Mouse::getPosition(window).y / PIXEL_CELL_WIDTH;
+				current_mouse_cell_x = sf::Mouse::getPosition(window).x / PIXEL_CELL_HEIGHT;
 
-    for (int i = 0; i < FIELD_HEIGHT; i++)
-    {
-        for (int j = 0; j < FIELD_WIDTH; j++)
-        {
-            int pixelIndex = ((FIELD_HEIGHT - 1 - i) * FIELD_WIDTH + j);
+				if (current_mouse_cell_x < 0 || current_mouse_cell_x >= FIELD_WIDTH ||
+					current_mouse_cell_y < 0 || current_mouse_cell_y >= FIELD_HEIGHT)
+				{
+					continue;
+				}
 
-            grid.cells[pixelIndex]->u.x = grid.cells[pixelIndex]->grad_p.x;
-        }
-    }
+				int cell_index = (FIELD_HEIGHT - 1 - current_mouse_cell_y) * FIELD_WIDTH + current_mouse_cell_x;
+				vec2 force = brush.gauss_brush(current_mouse_cell_x, current_mouse_cell_y, start_mouse_cell_x, start_mouse_cell_y);
+				solver.set_force(grid, cell_index, force, brush.radius);
+				std::cout << force.x << std::endl;
+			}
+			if (event.type == sf::Event::MouseButtonReleased)
+			{
+				if (event.mouseButton.button == sf::Mouse::Left)
+				{
+					brush.power = DEFAULT_BRUSH_POWER;
+				}
+			}
+			if (event.type == sf::Event::MouseWheelScrolled)
+			{
+				brush.radius += event.mouseWheelScroll.delta;
+				brush.radius = std::max(1, brush.radius);
+			}
+		}
+		layer.view_layer(grid, current_layer);
+		solver.velocity_attenuation(grid);
 
-    grid.to_file_field("tets.txt", Density);
+		current_time += DELTA_TIME;
 
-    LayerRenderer layer;
-    FieldType current_layer = DEFAULT_FIELDTYPE;
-    sf::Sprite current_view_layer = layer.view_layer(grid, current_layer);
-
-    Brush brush(DEFAULT_BRUSH_RADIUS, DEFAULT_BRUSH_POWER);
-
-    while (window.isOpen())
-    {
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed) 
-            {
-                window.close();
-            }
-            if (event.type == sf::Event::Resized)
-            {
-                std::cout << "Window has been resized!" << std::endl;
-            }
-            if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-            {
-                int mouse_cell_y = sf::Mouse::getPosition(window).y / PIXEL_CELL_WIDTH;
-                int mouse_cell_x = sf::Mouse::getPosition(window).x / PIXEL_CELL_HEIGHT;
-                brush.gauss_brush(grid, current_layer, mouse_cell_x, mouse_cell_y);
-                layer.view_layer(grid, current_layer);
-
-            }
-            if (event.type == sf::Event::MouseButtonReleased)
-            {
-                if (event.mouseButton.button == sf::Mouse::Left)
-                {
-                    brush.power = DEFAULT_BRUSH_POWER;
-                }
-            }
-            if (event.type == sf::Event::MouseWheelScrolled)
-            {
-                brush.radius += event.mouseWheelScroll.delta;
-                brush.radius = std::max(1, brush.radius);
-            }
-        }
-        window.clear();
-        window.draw(current_view_layer);
-        window.display();
-    }
-
-    return 0;
+		window.setTitle("Current time: " + std::to_string(current_time));
+		window.clear();
+		window.draw(current_view_layer);
+		window.display();
+	}
+	return 0;
 }
