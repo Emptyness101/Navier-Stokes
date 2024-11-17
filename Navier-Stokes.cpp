@@ -29,6 +29,7 @@ int main()
 	LayerRenderer layer;
 	FieldType current_layer = DEFAULT_FIELDTYPE;
 	sf::Sprite current_view_layer = layer.view_layer(grid, current_layer);
+	bool time_is_running = 0;
 
 	Brush brush(DEFAULT_BRUSH_RADIUS, DEFAULT_BRUSH_POWER);
 	int start_mouse_cell_y = 0;
@@ -86,11 +87,21 @@ int main()
 				brush.radius += event.mouseWheelScroll.delta;
 				brush.radius = std::max(1, brush.radius);
 			}
+			if (event.type == sf::Event::KeyPressed)
+			{
+				if (event.key.code == sf::Keyboard::Escape)
+				{
+					time_is_running = !time_is_running;
+				}
+			}
 		}
 		layer.view_layer(grid, current_layer);
-		solver.velocity_attenuation(grid);
 
-		current_time += DELTA_TIME;
+		if (time_is_running)
+		{
+			solver.velocity_attenuation(grid);
+			current_time += DELTA_TIME;
+		}
 
 		window.setTitle("Current time: " + std::to_string(current_time));
 		window.clear();

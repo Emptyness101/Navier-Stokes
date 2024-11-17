@@ -20,9 +20,9 @@ const int PHYS_FIELD_HEIGHT = 50;
 const float PHYS_CELL_WIDTH  = PHYS_FIELD_WIDTH / (float)FIELD_WIDTH;
 const float PHYS_CELL_HEIGHT = PHYS_FIELD_HEIGHT / (float)FIELD_HEIGHT;
 
-// Brush settings
+//Brush settings
 const int   DEFAULT_BRUSH_RADIUS   = 1;
-const float DEFAULT_BRUSH_POWER    = 5;
+const float DEFAULT_BRUSH_POWER    = 50;
 const float BRUSH_ATTENUATION_RATE = 0.001;
 
 //Time settings
@@ -32,7 +32,6 @@ const float DELTA_TIME = 0.1;
 const float ATTENUATION_COEFFICIENT = 0.99;
 
 //Threshold's
-
 const float THRESHOLD_ALIGNMENT = 1e-5;
 
 enum FieldType
