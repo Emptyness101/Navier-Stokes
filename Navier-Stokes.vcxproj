@@ -137,7 +137,6 @@
   <ItemGroup>
     <ClCompile Include="Brush.cpp" />
     <ClCompile Include="Cell.cpp" />
-    <ClCompile Include="DifferentialOperators.cpp" />
     <ClCompile Include="LayerRenderer.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="Navier-Stokes.cpp" />
@@ -147,7 +146,6 @@
     <ClInclude Include="Brush.h" />
     <ClInclude Include="Cell.h" />
     <ClInclude Include="Constants.h" />
-    <ClInclude Include="DifferentialOperators.h" />
     <ClInclude Include="LayerRenderer.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="resource.h" />

@@ -7,4 +7,5 @@ struct vec2
 	vec2 operator-(vec2);
 	vec2 operator+(vec2);
 	vec2 operator*(double);
+	vec2& operator+=(vec2);
 };

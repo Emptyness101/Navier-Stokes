@@ -12,19 +12,6 @@
 #include "Grid.h"
 #include "Brush.h"
 #include "LayerRenderer.h"
-#include "DifferentialOperators.h"
-//TODO
-/*
-* формулы 
-* посмотреть библиотеки для векторных вычислений, cpp boost (ublas)
-*/
-
-/*
-* для внешних добавить поле направление 0 1 2 3 разные разностные схемы для каждой грани 
-* в cell поле для div grad и тд
-* в целл есть ро и град тогда из грида берем ро и кладем в град (который в целл)
-* форс кисти возращает вектор!!!
-*/
 
 int main()
 {
@@ -32,7 +19,6 @@ int main()
 
     Grid grid(FIELD_WIDTH, FIELD_HEIGHT);
     grid.initialize(0, 10, vec2(0, 0));
-    DifferentialOperators dop;
     
     for (int i = 0; i < FIELD_HEIGHT; i++)
     {
@@ -41,6 +27,7 @@ int main()
             int pixelIndex = ((FIELD_HEIGHT - 1 - i) * FIELD_WIDTH + j);
 
             grid.cells[pixelIndex]->u.x = 50;
+            grid.cells[pixelIndex]->u.y = 25;
 
         }
     }
@@ -52,6 +39,7 @@ int main()
             int pixelIndex = ((FIELD_HEIGHT - 1 - i) * FIELD_WIDTH + j);
 
             grid.cells[pixelIndex]->u.x = 100;
+            grid.cells[pixelIndex]->u.y = 100;
 
         }
     }
@@ -62,15 +50,21 @@ int main()
         {
             int pixelIndex = ((FIELD_HEIGHT - 1 - i) * FIELD_WIDTH + j);
 
-            grid.cells[pixelIndex]->calcgrad();
-            
-            grid.cells[pixelIndex]->rho = grid.cells[pixelIndex]->grad.x;
+                grid.cells[pixelIndex]->calc_div_u();
         }
     }
 
+    for (int i = 0; i < FIELD_HEIGHT; i++)
+    {
+        for (int j = 0; j < FIELD_WIDTH; j++)
+        {
+            int pixelIndex = ((FIELD_HEIGHT - 1 - i) * FIELD_WIDTH + j);
+
+            grid.cells[pixelIndex]->u.x = grid.cells[pixelIndex]->grad_p.x;
+        }
+    }
 
     grid.to_file_field("tets.txt", Density);
-    std::cout << grid.cells[((FIELD_HEIGHT - 1 - FIELD_HEIGHT/2) * FIELD_WIDTH + FIELD_WIDTH/2)]->rho;
 
     LayerRenderer layer;
     FieldType current_layer = DEFAULT_FIELDTYPE;
@@ -97,6 +91,7 @@ int main()
                 int mouse_cell_x = sf::Mouse::getPosition(window).x / PIXEL_CELL_HEIGHT;
                 brush.gauss_brush(grid, current_layer, mouse_cell_x, mouse_cell_y);
                 layer.view_layer(grid, current_layer);
+
             }
             if (event.type == sf::Event::MouseButtonReleased)
             {

@@ -34,4 +34,4 @@ enum FieldType
     Density
 };
 
-const FieldType DEFAULT_FIELDTYPE = Density;
+const FieldType DEFAULT_FIELDTYPE = Velocity;

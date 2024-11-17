@@ -23,5 +23,4 @@ struct Grid
     void to_file_field(std::string, FieldType) const;
     void file_set_force(std::string, FieldType);
     double& get_field_data(Cell& cell, FieldType layerType);
-
 };
