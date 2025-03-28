@@ -103,7 +103,8 @@ int main()
 		{
 			//solver.velocity_attenuation(grid);
 			solver.advect(grid, DELTA_TIME, 1);
-			
+			solver.computePressure(grid, pressure_c, DELTA_TIME);
+			solver.project(grid);
 			current_time += DELTA_TIME;
 		}
 

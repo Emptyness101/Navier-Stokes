@@ -14,4 +14,10 @@ struct Solver
     vec2 jacobiVelocity(const Grid& grid, size_t x, size_t y, vec2 B, float alpha, float beta);
     void diffuse(Grid& newGrid, const Grid& oldGrid, float vDiffusion, float dt);
     void computeDiffusion(Grid& grid, float dt);
+
+    float jacobiPressure(const Grid& grid, size_t x, size_t y, float B, float alpha, float beta);
+    float divergency(const Grid& grid, size_t x, size_t y);
+    void computePressure(Grid& grid, float pressure, float dt);
+    vec2 gradient(const Grid& grid, size_t x, size_t y);
+    void project(Grid& grid);
 };

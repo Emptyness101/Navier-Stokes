@@ -31,6 +31,8 @@ const float DELTA_TIME = 0.01;
 
 const int velocityIterations = 5; // Можно настроить (обычно 20-50)
 const float velocityDiffusion = 0.01f; // Зависит от симуляции
+const int pressureIterations = 5;
+const float pressure_c = 1.5f;
 
 //Attenuation settings
 const float ATTENUATION_COEFFICIENT = 0.99;

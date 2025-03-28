@@ -1,4 +1,4 @@
-#include "Solver.h"
+Ôªø#include "Solver.h"
 
 void Solver::velocity_attenuation(Grid& grid)
 {
@@ -120,7 +120,7 @@ vec2 Solver::jacobiVelocity(const Grid& grid, size_t x, size_t y, vec2 B, float 
 {
     vec2 vU = B * -1.0, vD = B * -1.0, vR = B * -1.0, vL = B * -1.0;
 
-    // œÓ‚ÂˇÂÏ „‡ÌËˆ˚ Ë ËÁ‚ÎÂÍ‡ÂÏ ÒÍÓÓÒÚ¸ ËÁ Cell
+    // √è√∞√Æ√¢√•√∞√ø√•√¨ √£√∞√†√≠√®√∂√ª √® √®√ß√¢√´√•√™√†√•√¨ √±√™√Æ√∞√Æ√±√≤√º √®√ß Cell
     auto get_velocity = [&](size_t x, size_t y) -> vec2
         {
             return grid.cells[y * grid.width + x]->u;
@@ -160,4 +160,84 @@ void Solver::computeDiffusion(Grid& grid, float dt)
         std::swap(grid, tempGrid);
     }
 }
+
+float Solver::jacobiPressure(const Grid& grid, size_t x, size_t y, float B, float alpha, float beta) 
+{
+    float C = grid.cells[y * grid.width + x]->p;
+    float xU = C, xD = C, xL = C, xR = C;
+
+    auto get_pressure = [&](size_t x, size_t y) -> float {
+        return grid.cells[y * grid.width + x]->p;
+        };
+
+    if (y > 0) xU = get_pressure(x, y - 1);
+    if (y < grid.height - 1) xD = get_pressure(x, y + 1);
+    if (x > 0) xL = get_pressure(x - 1, y);
+    if (x < grid.width - 1) xR = get_pressure(x + 1, y);
+
+    return (xU + xD + xL + xR + alpha * B) * (1.0f / beta);
+}
+
+float Solver::divergency(const Grid& grid, size_t x, size_t y) 
+{
+    vec2 uC = grid.cells[y * grid.width + x]->u;
+    float x1 = -uC.x, x2 = -uC.x, y1 = -uC.y, y2 = -uC.y;
+
+    auto get_velocity = [&](size_t x, size_t y) -> vec2 {
+        return grid.cells[y * grid.width + x]->u;
+        };
+
+    if (x < grid.width - 1) x1 = get_velocity(x + 1, y).x;
+    if (x > 0) x2 = get_velocity(x - 1, y).x;
+    if (y < grid.height - 1) y1 = get_velocity(x, y + 1).y;
+    if (y > 0) y2 = get_velocity(x, y - 1).y;
+
+    return (x1 - x2 + y1 - y2) * 0.5f;
+}
+
+void Solver::computePressure(Grid& grid, float pressure, float dt) {
+    Grid tempGrid = grid; // –ö–æ–ø–∏—è –¥–ª—è –∏—Ç–µ—Ä–∞—Ü–∏–π
+
+    for (int i = 0; i < pressureIterations; i++) {
+        for (size_t y = 0; y < grid.height; ++y) {
+            for (size_t x = 0; x < grid.width; ++x) {
+                float div = divergency(grid, x, y);
+                float alpha = -pressure * pressure;
+                float beta = 4.0f;
+                tempGrid.cells[y * grid.width + x]->p = jacobiPressure(grid, x, y, div, alpha, beta);
+            }
+        }
+        std::swap(grid, tempGrid);
+    }
+}
+
+vec2 Solver::gradient(const Grid& grid, size_t x, size_t y) {
+    float C = grid.cells[y * grid.width + x]->p;
+    float x1 = C, x2 = C, y1 = C, y2 = C;
+
+    auto get_pressure = [&](size_t x, size_t y) -> float {
+        return grid.cells[y * grid.width + x]->p;
+        };
+
+    if (x < grid.width - 1) x1 = get_pressure(x + 1, y);
+    if (x > 0) x2 = get_pressure(x - 1, y);
+    if (y < grid.height - 1) y1 = get_pressure(x, y + 1);
+    if (y > 0) y2 = get_pressure(x, y - 1);
+
+    return vec2((x1 - x2) * 0.5f, (y1 - y2) * 0.5f);
+}
+
+void Solver::project(Grid& grid) {
+    for (size_t y = 0; y < grid.height; ++y) {
+        for (size_t x = 0; x < grid.width; ++x) {
+            vec2& u = grid.cells[y * grid.width + x]->u;
+            u = u - gradient(grid, x, y);
+        }
+    }
+}
+
+
+
+
+
 
