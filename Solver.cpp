@@ -47,3 +47,117 @@ void Solver::set_force(Grid& grid, int cell_index, vec2 force, int radius)
         }
     }
 }
+
+void Solver::advect(Grid& grid, float dt, float diffusion)
+{
+    auto new_cells = grid.cells;
+
+    for (int y = 0; y < grid.height; ++y)
+    {
+        for (int x = 0; x < grid.width; ++x)
+        {
+            auto& cell = grid.cells[x + y * grid.width];
+            if (dynamic_cast<Boundary*>(cell.get())) continue;
+
+            vec2 phys_pos(
+                cell->pos.x * PHYS_CELL_WIDTH,
+                cell->pos.y * PHYS_CELL_HEIGHT
+            );
+
+            vec2 traced_pos = phys_pos - cell->u * dt;
+            vec2 new_u = interpolate_velocity(traced_pos, grid);
+
+            float decay = 1.0f / (1.0f + diffusion * dt);
+            new_u = new_u * decay;
+
+            auto new_cell = std::make_shared<Inner>(*std::static_pointer_cast<Inner>(cell));
+            new_cell->u = new_u;
+            new_cells[x + y * grid.width] = new_cell;
+        }
+    }
+
+    grid.cells = std::move(new_cells);
+    grid.set_neighbors();
+}
+
+vec2 Solver::interpolate_velocity(const vec2& phys_pos, Grid& grid)
+{
+    float x = phys_pos.x / PHYS_CELL_WIDTH;
+    float y = phys_pos.y / PHYS_CELL_HEIGHT;
+
+    float x1 = std::floor(x);
+    float y1 = std::floor(y);
+    float x2 = x1 + 1;
+    float y2 = y1 + 1;
+
+    auto clamp = [](float val, float minv, float maxv)
+        {
+            return std::max(minv, std::min(maxv, val));
+        };
+
+    auto get_cell = [&](float x, float y) -> Cell*
+        {
+            int ix = static_cast<int>(clamp(x, 0, grid.width - 1));
+            int iy = static_cast<int>(clamp(y, 0, grid.height - 1));
+            return grid.cells[ix + iy * grid.width].get();
+        };
+
+    Cell* q11 = get_cell(x1, y1);
+    Cell* q12 = get_cell(x1, y2);
+    Cell* q21 = get_cell(x2, y1);
+    Cell* q22 = get_cell(x2, y2);
+
+    float tx = (x - x1);
+    float ty = (y - y1);
+
+    vec2 f1 = q11->u * (1 - tx) + q21->u * tx;
+    vec2 f2 = q12->u * (1 - tx) + q22->u * tx;
+
+    return f1 * (1 - ty) + f2 * ty;
+}
+
+vec2 Solver::jacobiVelocity(const Grid& grid, size_t x, size_t y, vec2 B, float alpha, float beta)
+{
+    vec2 vU = B * -1.0, vD = B * -1.0, vR = B * -1.0, vL = B * -1.0;
+
+    // ѕровер€ем границы и извлекаем скорость из Cell
+    auto get_velocity = [&](size_t x, size_t y) -> vec2
+        {
+            return grid.cells[y * grid.width + x]->u;
+        };
+
+    if (y > 0) vU = get_velocity(x, y - 1);
+    if (y < grid.height - 1) vD = get_velocity(x, y + 1);
+    if (x > 0) vL = get_velocity(x - 1, y);
+    if (x < grid.width - 1) vR = get_velocity(x + 1, y);
+
+    return (vU + vD + vL + vR + B * alpha) * (1.0 / beta);
+}
+
+
+void Solver::diffuse(Grid& newGrid, const Grid& oldGrid, float vDiffusion, float dt)
+{
+    float alpha = vDiffusion * vDiffusion / dt;
+    float beta = 4.0 + alpha;
+
+    for (size_t y = 0; y < oldGrid.height; ++y)
+    {
+        for (size_t x = 0; x < oldGrid.width; ++x)
+        {
+            vec2 B = oldGrid.cells[y * oldGrid.width + x]->u;
+            newGrid.cells[y * newGrid.width + x]->u = jacobiVelocity(oldGrid, x, y, B, alpha, beta);
+        }
+    }
+}
+
+
+void Solver::computeDiffusion(Grid& grid, float dt)
+{
+    Grid tempGrid = grid;
+    for (int i = 0; i < velocityIterations; i++)
+    {
+        diffuse(tempGrid, grid, velocityDiffusion, dt);
+        std::swap(grid, tempGrid);
+    }
+}
+

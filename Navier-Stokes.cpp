@@ -74,6 +74,7 @@ int main()
 				vec2 force = brush.gauss_brush(current_mouse_cell_x, current_mouse_cell_y, start_mouse_cell_x, start_mouse_cell_y);
 				solver.set_force(grid, cell_index, force, brush.radius);
 				std::cout << force.x << std::endl;
+				
 			}
 			if (event.type == sf::Event::MouseButtonReleased)
 			{
@@ -81,6 +82,7 @@ int main()
 				{
 					brush.power = DEFAULT_BRUSH_POWER;
 				}
+				solver.computeDiffusion(grid, DELTA_TIME);
 			}
 			if (event.type == sf::Event::MouseWheelScrolled)
 			{
@@ -99,7 +101,9 @@ int main()
 
 		if (time_is_running)
 		{
-			solver.velocity_attenuation(grid);
+			//solver.velocity_attenuation(grid);
+			solver.advect(grid, DELTA_TIME, 1);
+			
 			current_time += DELTA_TIME;
 		}
 

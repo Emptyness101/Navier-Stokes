@@ -156,7 +156,7 @@ void Grid::to_file_field(std::string outputpath , FieldType type) const
                     output << cells[pixelIndex]->p << " ";
                     break;
                 case Density:
-                    output << cells[pixelIndex]->rho << " ";
+                    output << cells[pixelIndex]->rho << " "; 
                     break;
                 default:
                     break;
