@@ -5,8 +5,8 @@ const int WINDOW_WIDTH	= 1000;
 const int WINDOW_HEIGHT = 1000;
 
 // Field height and width in pixels
-const int FIELD_WIDTH  = 100;
-const int FIELD_HEIGHT = 100;
+const int FIELD_WIDTH  = 500;
+const int FIELD_HEIGHT = 500;
 
 // Cell height and width in pixels
 const float PIXEL_CELL_WIDTH  = WINDOW_WIDTH / FIELD_WIDTH;
@@ -29,10 +29,14 @@ const float BRUSH_ATTENUATION_RATE = 0.001;
 const float DELTA_TIME = 0.01;
 
 
-const int velocityIterations = 5; // Можно настроить (обычно 20-50)
-const float velocityDiffusion = 0.01f; // Зависит от симуляции
-const int pressureIterations = 5;
-const float pressure_c = 1.5f;
+const int velocityIterations = 30; // Можно настроить (обычно 20-50)
+const float velocityDiffusion = 0.5f; // Зависит от симуляции
+
+const float velocityDiffusionSP = 1;
+const int pressureIterations = 5;   
+const float pressure_c = 0.5f;
+
+const float vorticityStrength = 0.0f;
 
 //Attenuation settings
 const float ATTENUATION_COEFFICIENT = 0.99;

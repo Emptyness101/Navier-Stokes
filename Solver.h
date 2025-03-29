@@ -20,4 +20,10 @@ struct Solver
     void computePressure(Grid& grid, float pressure, float dt);
     vec2 gradient(const Grid& grid, size_t x, size_t y);
     void project(Grid& grid);
+
+    float curl(const Grid& grid, size_t x, size_t y);
+    vec2 absGradient(const std::vector<float>& vorticityField, size_t xSize, size_t ySize, size_t x, size_t y);
+    void computeVorticity(Grid& grid, std::vector<float>& vorticityField);
+    void applyVorticity(Grid& grid, const std::vector<float>& vorticityField, float vorticityStrength, float dt);
+
 };

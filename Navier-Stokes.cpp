@@ -102,11 +102,18 @@ int main()
 		if (time_is_running)
 		{
 			//solver.velocity_attenuation(grid);
-			solver.advect(grid, DELTA_TIME, 1);
+
+			std::vector<float> vorticityField;
+			solver.computeVorticity(grid, vorticityField);
+			solver.applyVorticity(grid, vorticityField, vorticityStrength, DELTA_TIME);
+
 			solver.computePressure(grid, pressure_c, DELTA_TIME);
 			solver.project(grid);
+			solver.advect(grid, DELTA_TIME, velocityDiffusionSP);
+
 			current_time += DELTA_TIME;
 		}
+
 
 		window.setTitle("Current time: " + std::to_string(current_time));
 		window.clear();
