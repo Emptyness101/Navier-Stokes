@@ -282,7 +282,7 @@ void Solver::applyVorticity(Grid& grid, const std::vector<float>& vorticityField
     for (size_t y = 0; y < grid.height; ++y) {
         for (size_t x = 0; x < grid.width; ++x) {
             vec2 vGrad = absGradient(vorticityField, grid.width, grid.height, x, y);
-            vGrad.y *= -1.0f;  // Поворот на 90 градусов
+            vGrad.y *= -1.0f;  
 
             float length = std::sqrt(vGrad.x * vGrad.x + vGrad.y * vGrad.y) + 1e-5f;
             vec2 vNorm = vGrad * (1.0f / length);

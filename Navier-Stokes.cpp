@@ -73,7 +73,7 @@ int main()
 				int cell_index = (FIELD_HEIGHT - 1 - current_mouse_cell_y) * FIELD_WIDTH + current_mouse_cell_x;
 				vec2 force = brush.gauss_brush(current_mouse_cell_x, current_mouse_cell_y, start_mouse_cell_x, start_mouse_cell_y);
 				solver.set_force(grid, cell_index, force, brush.radius);
-				std::cout << force.x << std::endl;
+				//std::cout << force.x << std::endl;
 				
 			}
 			if (event.type == sf::Event::MouseButtonReleased)
@@ -82,7 +82,6 @@ int main()
 				{
 					brush.power = DEFAULT_BRUSH_POWER;
 				}
-				solver.computeDiffusion(grid, DELTA_TIME);
 			}
 			if (event.type == sf::Event::MouseWheelScrolled)
 			{
@@ -107,6 +106,8 @@ int main()
 			solver.computeVorticity(grid, vorticityField);
 			solver.applyVorticity(grid, vorticityField, vorticityStrength, DELTA_TIME);
 
+			solver.computeDiffusion(grid, DELTA_TIME);
+
 			solver.computePressure(grid, pressure_c, DELTA_TIME);
 			solver.project(grid);
 			solver.advect(grid, DELTA_TIME, velocityDiffusionSP);
@@ -115,7 +116,7 @@ int main()
 		}
 
 
-		window.setTitle("Current time: " + std::to_string(current_time));
+		window.setTitle("Current time: " + std::to_string(grid.maxx));
 		window.clear();
 		window.draw(current_view_layer);
 		window.display();

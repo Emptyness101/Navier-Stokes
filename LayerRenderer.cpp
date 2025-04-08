@@ -5,19 +5,20 @@ sf::Sprite LayerRenderer::view_layer(Grid& grid, FieldType layerType)
     double max_data = std::numeric_limits<double>::lowest();
     double min_data = std::numeric_limits<double>::max();
 
-    for (int i = 0; i < FIELD_HEIGHT; i++)
+    for (int i = 1; i < FIELD_HEIGHT-1; i++)
     {
-        for (int j = 0; j < FIELD_WIDTH; j++)
+        for (int j = 1; j < FIELD_WIDTH-1; j++)
         {
             double data = grid.get_field_data(*grid.cells[j + i * grid.width], layerType);
             max_data = std::max(max_data, data);
             min_data = std::min(min_data, data);
+            grid.maxx = max_data;
         }
     }
 
-    for (int i = 0; i < FIELD_HEIGHT; i++)
+    for (int i = 1; i < FIELD_HEIGHT -1; i++)
     {
-        for (int j = 0; j < FIELD_WIDTH; j++)
+        for (int j = 1; j < FIELD_WIDTH -1; j++)
         {
             int pixelIndex = ((FIELD_HEIGHT - 1 - i) * FIELD_WIDTH + j) * 4;
 
