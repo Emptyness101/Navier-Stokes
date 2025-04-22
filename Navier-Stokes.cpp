@@ -1,97 +1,125 @@
-﻿#include <iostream>
+﻿#define _USE_MATH_DEFINES
+
+#include <iostream>
 #include <vector>
+#include <cmath>
+#include <cstring>
 
 #include "SFML/Graphics.hpp"
 
-#include "vec2.h"
 #include "Constants.h"
-
+#include "vec2.h"
 #include "Cell.h"
 #include "Grid.h"
+#include "Brush.h"
 #include "LayerRenderer.h"
-
-//TODO
-/*
-* формулы 
-* grid::setforce vector <vec2> f ---> grid 
-* load from file
-* посмотреть библиотеки для векторных вычислений, cpp boost
-*/
+#include "Solver.h"
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
+	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
+	window.setVerticalSyncEnabled(true);
 
-    Grid grid(FIELD_WIDTH, FIELD_HEIGHT);
-    grid.initialize(0, 10, vec2(0, 0));
+	Grid grid(FIELD_WIDTH, FIELD_HEIGHT);
+	grid.initialize(0, 10, vec2(0, 0));
 
-    LayerRenderer layer;
-    FieldType current_layer = Density;
-    sf::Sprite current_view_layer = layer.view_layer(grid, current_layer);
+	grid.to_file_field("tets.txt", Density);
 
-    int brush_radius  = DEFAULT_BRUSH_RADIUS;
-    float brush_power = DEFAULT_BRUSH_POWER;
+	Solver solver;
+	LayerRenderer layer;
+	FieldType current_layer = DEFAULT_FIELDTYPE;
+	sf::Sprite current_view_layer = layer.view_layer(grid, current_layer);
+	bool time_is_running = 0;
 
-    while (window.isOpen())
-    {
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-            {
-                window.close();
-            }
-            if (event.type == sf::Event::Resized)
-            {
-                std::cout << "Window has been resized!" << std::endl;
-            }
+	Brush brush(DEFAULT_BRUSH_RADIUS, DEFAULT_BRUSH_POWER);
+	int start_mouse_cell_y = 0;
+	int start_mouse_cell_x = 0;
+	int current_mouse_cell_x = 0;
+	int current_mouse_cell_y = 0;
 
-            if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-            {
-                int mouse_cell_y = sf::Mouse::getPosition(window).y / CELL_WIDTH;
-                int mouse_cell_x = sf::Mouse::getPosition(window).x / CELL_HEIGHT;
+	float current_time = 0;
 
-                float sigma = brush_radius / 2.0;
+	while (window.isOpen())
+	{
+		sf::Event event;
 
-                for (int dy = -brush_radius; dy <= brush_radius; dy++)
-                {
-                    for (int dx = -brush_radius; dx <= brush_radius; dx++)
-                    {
-                        int y = mouse_cell_y + dy;
-                        int x = mouse_cell_x + dx;
-                        float distance = dx * dx + dy * dy;
+		while (window.pollEvent(event))
+		{
+			if (event.type == sf::Event::Closed)
+			{
+				window.close();
+			}
+			if (event.type == sf::Event::Resized)
+			{
+				std::cout << "Window has been resized!" << std::endl;
+			}
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			{
+				if (event.mouseButton.button == sf::Mouse::Button::Left)
+				{
+					start_mouse_cell_y = sf::Mouse::getPosition(window).y / PIXEL_CELL_WIDTH;
+					start_mouse_cell_x = sf::Mouse::getPosition(window).x / PIXEL_CELL_HEIGHT;
+				}
 
-                        if (x < 0 || x >= FIELD_WIDTH || y < 0 || y >= FIELD_HEIGHT) continue;
+				current_mouse_cell_y = sf::Mouse::getPosition(window).y / PIXEL_CELL_WIDTH;
+				current_mouse_cell_x = sf::Mouse::getPosition(window).x / PIXEL_CELL_HEIGHT;
 
-                        if (distance <= brush_radius * brush_radius)
-                        {
-                            float weight = std::exp(-distance / (2 * sigma * sigma)); // 1/sigma*sqrt(6.28) useless!
-                            int cell_index = (FIELD_HEIGHT - 1 - y) * FIELD_WIDTH + x;
-                            layer.get_layer_data(*grid.cells[cell_index], current_layer) += brush_power * weight;
-                        }
-                    }
-                }
-                layer.view_layer(grid, current_layer);
-                brush_power = std::max(0.f, brush_power - BRUSH_ATTENUATION_RATE);
-            }
-            if (event.type == sf::Event::MouseButtonReleased)
-            {
-                if (event.mouseButton.button == sf::Mouse::Left)
-                {
-                    brush_power = DEFAULT_BRUSH_POWER;
-                }
-            }
-            if (event.type == sf::Event::MouseWheelScrolled)
-            {
-                brush_radius += event.mouseWheelScroll.delta;
-                brush_radius = std::max(0, brush_radius); // BUG: if radius is 0 then infinite paint 
-            }
-        }
-        window.clear();
-        window.draw(current_view_layer);
-        window.display();
-    }
+				if (current_mouse_cell_x < 0 || current_mouse_cell_x >= FIELD_WIDTH ||
+					current_mouse_cell_y < 0 || current_mouse_cell_y >= FIELD_HEIGHT)
+				{
+					continue;
+				}
 
-    return 0;
+				int cell_index = (FIELD_HEIGHT - 1 - current_mouse_cell_y) * FIELD_WIDTH + current_mouse_cell_x;
+				vec2 force = brush.gauss_brush(current_mouse_cell_x, current_mouse_cell_y, start_mouse_cell_x, start_mouse_cell_y);
+				solver.set_force(grid, cell_index, force, brush.radius);
+				//std::cout << force.x << std::endl;
+				
+			}
+			if (event.type == sf::Event::MouseButtonReleased)
+			{
+				if (event.mouseButton.button == sf::Mouse::Left)
+				{
+					brush.power = DEFAULT_BRUSH_POWER;
+				}
+			}
+			if (event.type == sf::Event::MouseWheelScrolled)
+			{
+				brush.radius += event.mouseWheelScroll.delta;
+				brush.radius = std::max(1, brush.radius);
+			}
+			if (event.type == sf::Event::KeyPressed)
+			{
+				if (event.key.code == sf::Keyboard::Escape)
+				{
+					time_is_running = !time_is_running;
+				}
+			}
+		}
+		layer.view_layer(grid, current_layer);
+
+		if (time_is_running)
+		{
+			//solver.velocity_attenuation(grid);
+
+			std::vector<float> vorticityField;
+			solver.computeVorticity(grid, vorticityField);
+			solver.applyVorticity(grid, vorticityField, vorticityStrength, DELTA_TIME);
+
+			solver.computeDiffusion(grid, DELTA_TIME);
+
+			solver.computePressure(grid, pressure_c, DELTA_TIME);
+			solver.project(grid);
+			solver.advect(grid, DELTA_TIME, velocityDiffusionSP);
+
+			current_time += DELTA_TIME;
+		}
+
+
+		window.setTitle("Current time: " + std::to_string(grid.maxx));
+		window.clear();
+		window.draw(current_view_layer);
+		window.display();
+	}
+	return 0;
 }
-

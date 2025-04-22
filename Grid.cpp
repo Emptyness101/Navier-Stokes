@@ -11,11 +11,11 @@ void Grid::initialize(double initial_p, double initial_rho, vec2 velocity)
         {
             if (i == 0 || j == 0 || j == (width - 1) || i == (height - 1)) 
             {
-                cells[j + i * width] = std::make_shared<Boundary>(vec2(j, i), velocity, initial_p, initial_rho);
+                cells[j + i * width] = std::make_shared<Boundary>(vec2(j, i), velocity, initial_p, initial_rho, vec2(0,0), 0, 0);
             }
             else 
             {
-                cells[j + i * width] = std::make_shared<Inner>(vec2(j, i), velocity, initial_p, initial_rho);
+                cells[j + i * width] = std::make_shared<Inner>(vec2(j, i), velocity, initial_p, initial_rho, vec2(0, 0), 0, 0);
             }
         }
     }
@@ -29,14 +29,67 @@ void Grid::set_neighbors()
         for (int j = 0; j < width; j++) 
         {
             auto& currentCell = cells[j + i * width];
-            // left neighbor
+            // Left neighbor
             if (j > 0) currentCell->neighbors[0] = cells[j - 1 + i * width].get();
-            // upper neighbor
+            // Upper neighbor
             if (i < height - 1) currentCell->neighbors[1] = cells[j + (i+1) * width].get();
-            // right neighbor 
+            // Right neighbor 
             if (j < width - 1) currentCell->neighbors[2] = cells[j + 1 + i * width].get();
-            // lower neighbor
+            // Lower neighbor
             if (i > 0) currentCell->neighbors[3] = cells[j + (i - 1) * width].get();
+        }
+    }
+}
+
+double& Grid::get_field_data(Cell& cell, FieldType field_type)
+{
+    switch (field_type)
+    {
+    case Pressure:
+        return cell.p;
+    case Density:
+        return cell.rho;
+    case Velocity:
+        cell.update_magnitude_u();
+        return cell.magnitude_u;
+    case XVelocity:
+        return cell.u.x;
+    case YVelocity:
+        return cell.u.y;
+    default:
+        throw std::invalid_argument("layer type error");
+    }
+}
+
+void Grid::file_set_force(std::string input_path, FieldType input_data_type)
+{
+    std::ifstream input(input_path); 
+
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            int pixelIndex = ((height - 1 - i) * width + j);
+            char openBrace, comma, closeBrace;
+            switch (input_data_type) {
+            case Velocity:
+                input >> openBrace >> cells[pixelIndex]->u.x >> comma >> cells[pixelIndex]->u.y >> closeBrace;
+                break;
+            case XVelocity:
+                input >> cells[pixelIndex]->u.x;
+                break;
+            case YVelocity:
+                input >> cells[pixelIndex]->u.y;
+                break;
+            case Pressure:
+                input >> cells[pixelIndex]->p;
+                break;
+            case Density:
+                input >> cells[pixelIndex]->rho;
+                break;
+            default:
+                break;
+            }
         }
     }
 }
@@ -77,7 +130,7 @@ void Grid::print_cell_neighbors(int i, int j) const
     }
 }
 
-void Grid::to_file_scalar_field(std::string outputpath , FieldType type) const
+void Grid::to_file_field(std::string outputpath , FieldType type) const
 {
     std::ofstream output;          
     output.open(outputpath);
@@ -88,41 +141,28 @@ void Grid::to_file_scalar_field(std::string outputpath , FieldType type) const
             for (int j = 0; j < width; j++)
             {
                 int pixelIndex = ((height - 1 - i) * width + j);
-                if (type == Pressure)
-                {
+
+                switch (type) {
+                case Velocity:
+                    output << "{" << cells[pixelIndex]->u.x << "," << cells[pixelIndex]->u.y << "} ";
+                    break;
+                case XVelocity:
+                    output << cells[pixelIndex]->u.x << " ";
+                    break;
+                case YVelocity:
+                    output << cells[pixelIndex]->u.y << " ";
+                    break;
+                case Pressure:
                     output << cells[pixelIndex]->p << " ";
-                }
-                if (type == Density)
-                {
-                    output << cells[pixelIndex]->rho << " ";
-                }
-            }
-            output << std::endl;
-        }
-    }
-
-}
-
-void Grid::to_file_vector_field(std::string outputpath, FieldType type) const
-{
-    std::ofstream output;
-    output.open(outputpath);
-    if (output.is_open())
-    {
-        for (int i = 0; i < height; i++)
-        {
-            for (int j = 0; j < width; j++)
-            {
-                int pixelIndex = ((height - 1 - i) * width + j);
-                if (type == Velocity)
-                {
-                    output <<"{"<< cells[pixelIndex]->u.x << "," << cells[pixelIndex]->u.y << "} ";
+                    break;
+                case Density:
+                    output << cells[pixelIndex]->rho << " "; 
+                    break;
+                default:
+                    break;
                 }
             }
             output << std::endl;
         }
     }
-
 }
-
-

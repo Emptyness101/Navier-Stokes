@@ -2,7 +2,9 @@
 
 #include <vector>
 #include <limits>
+
 #include <SFML/Graphics.hpp>
+
 #include "Constants.h"
 #include "Grid.h"  
 
@@ -11,8 +13,7 @@ struct LayerRenderer
     sf::Texture texture;
     sf::Sprite sprite;
     std::vector<sf::Uint8> pixelBuffer;
-    sf::Sprite view_layer(const Grid&, FieldType);
-    double& get_layer_data(Cell&, FieldType);
+    sf::Sprite view_layer(Grid&, FieldType);
     LayerRenderer()
     {
         pixelBuffer.resize(FIELD_WIDTH * FIELD_HEIGHT * 4);

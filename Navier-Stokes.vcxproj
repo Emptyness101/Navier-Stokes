@@ -135,18 +135,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Brush.cpp" />
     <ClCompile Include="Cell.cpp" />
     <ClCompile Include="LayerRenderer.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="Navier-Stokes.cpp" />
+    <ClCompile Include="Solver.cpp" />
     <ClCompile Include="vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Brush.h" />
     <ClInclude Include="Cell.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="LayerRenderer.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Solver.h" />
     <ClInclude Include="vec2.h" />
   </ItemGroup>
   <ItemGroup>
