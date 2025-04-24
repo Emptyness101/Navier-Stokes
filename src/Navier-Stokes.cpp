@@ -18,7 +18,7 @@
 #include "Solver.h"
 
 #include "Json.hpp"
-using json = nlohmann::json;
+using json = nlohmann::json;	
 
 int main()
 {
