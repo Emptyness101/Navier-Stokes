@@ -24,8 +24,6 @@ int main()
 	Grid grid(FIELD_WIDTH, FIELD_HEIGHT);
 	grid.initialize(0, 10, vec2(0, 0));
 
-	grid.to_file_field("tets.txt", Density);
-
 	Solver solver;
 	LayerRenderer layer;
 	FieldType current_layer = DEFAULT_FIELDTYPE;
@@ -39,6 +37,8 @@ int main()
 	int current_mouse_cell_y = 0;
 
 	float current_time = 0;
+
+	FieldType out_type = Velocity;
 
 	while (window.isOpen())
 	{
@@ -103,10 +103,6 @@ int main()
 		{
 			//solver.velocity_attenuation(grid);
 
-			std::vector<float> vorticityField;
-			solver.computeVorticity(grid, vorticityField);
-			solver.applyVorticity(grid, vorticityField, vorticityStrength, DELTA_TIME);
-
 			solver.computeDiffusion(grid, DELTA_TIME);
 
 			solver.computePressure(grid, pressure_c, DELTA_TIME);
@@ -122,5 +118,6 @@ int main()
 		window.draw(current_view_layer);
 		window.display();
 	}
+	grid.to_file_field("MATLAB\\Fields\\Velocity.txt", out_type);
 	return 0;
 }

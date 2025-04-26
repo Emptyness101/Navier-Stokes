@@ -1,0 +1,24 @@
+void Solver::computeVorticity(Grid& grid, std::vector<float>& vorticityField) {
+    vorticityField.resize(grid.width * grid.height);
+
+    for (size_t y = 0; y < grid.height; ++y) {
+        for (size_t x = 0; x < grid.width; ++x) {
+            vorticityField[y * grid.width + x] = curl(grid, x, y);
+        }
+    }
+}
+
+void Solver::applyVorticity(Grid& grid, const std::vector<float>& vorticityField, float vorticityStrength, float dt) {
+    for (size_t y = 0; y < grid.height; ++y) {
+        for (size_t x = 0; x < grid.width; ++x) {
+            vec2 vGrad = absGradient(vorticityField, grid.width, grid.height, x, y);
+            vGrad.y *= -1.0f;  
+
+            float length = std::sqrt(vGrad.x * vGrad.x + vGrad.y * vGrad.y) + 1e-5f;
+            vec2 vNorm = vGrad * (1.0f / length);
+
+            vec2 vF = vNorm * vorticityField[y * grid.width + x] * vorticityStrength;
+            grid.cells[y * grid.width + x]->u += vF * dt;
+        }
+    }
+}
