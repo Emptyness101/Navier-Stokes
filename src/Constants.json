@@ -36,11 +36,15 @@
       "pressure": 10
     },
     "Phys": {
-      "description": "Fluid simulation parameters",
-      "velocity_diffusion": 0.8,
-      "velocity_diffusion_sp": 1.2,
-      "pressure_constant": 1.5,
-      "vorticity_strength": 50.5
+        "description": "Fluid simulation parameters",
+        "velocity_diffusion": 0.8,
+        "velocity_diffusion_sp": 1.2,
+        "pressure_constant": 1.5,
+        "vorticity_strength": 50.5
+    },
+    "Other": {
+        "threshold_alignment": 0.000001,
+        "attenuation_coefficient": 0.99
     }
   }
 }

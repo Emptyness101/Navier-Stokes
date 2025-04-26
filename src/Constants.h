@@ -1,46 +1,47 @@
 #pragma once
 
-// Window width and height in pixels
-const int WINDOW_WIDTH	= 500;
-const int WINDOW_HEIGHT = 500;
+#include "Json.hpp"
+#include <fstream>
 
-// Field height and width in pixels
-const int FIELD_WIDTH  = 100;
-const int FIELD_HEIGHT = 100;
+// Window settings
+extern int WINDOW_WIDTH;
+extern int WINDOW_HEIGHT;
 
-// Cell height and width in pixels
-const float PIXEL_CELL_WIDTH  = WINDOW_WIDTH / FIELD_WIDTH;
-const float PIXEL_CELL_HEIGHT = WINDOW_HEIGHT / FIELD_HEIGHT;
+// Field settings
+extern int FIELD_WIDTH;
+extern int FIELD_HEIGHT;
 
-// Field height and width in physical units
-const int PHYS_FIELD_WIDTH  = 50;
-const int PHYS_FIELD_HEIGHT = 50;
+// Cell size in pixels
+extern float PIXEL_CELL_WIDTH;
+extern float PIXEL_CELL_HEIGHT;
 
-// Cell height and width in physical units
-const float PHYS_CELL_WIDTH  = PHYS_FIELD_WIDTH / (float)FIELD_WIDTH;
-const float PHYS_CELL_HEIGHT = PHYS_FIELD_HEIGHT / (float)FIELD_HEIGHT;
+// Field size in physical units
+extern int PHYS_FIELD_WIDTH;
+extern int PHYS_FIELD_HEIGHT;
 
-//Brush settings
-const int   DEFAULT_BRUSH_RADIUS   = 1;
-const float DEFAULT_BRUSH_POWER    = 5000;
-const float BRUSH_ATTENUATION_RATE = 0.001;
+// Cell size in physical units
+extern float PHYS_CELL_WIDTH;
+extern float PHYS_CELL_HEIGHT;
 
-//Time settings
-const float DELTA_TIME = 0.02;
+// Brush settings
+extern int DEFAULT_BRUSH_RADIUS;
+extern float DEFAULT_BRUSH_POWER;
+extern float BRUSH_ATTENUATION_RATE;
 
-//Solver settings
-const float THRESHOLD_ALIGNMENT = 1e-5;
-const int velocityIterations = 50; 
-const float velocityDiffusion = 0.8f; 
+// Time settings
+extern float DELTA_TIME;
 
-const float velocityDiffusionSP = 1.2f;
-const int pressureIterations = 10;   
-const float pressure_c = 1.5f;
+// Solver settings
+extern float THRESHOLD_ALIGNMENT;
+extern int velocityIterations;
+extern float velocityDiffusion;
+extern float velocityDiffusionSP;
+extern int pressureIterations;
+extern float pressure_c;
+extern float vorticityStrength;
 
-const float vorticityStrength = 50.5f;
-
-//Attenuation settings
-const float ATTENUATION_COEFFICIENT = 0.99;
+// Attenuation settings
+extern float ATTENUATION_COEFFICIENT;
 
 enum FieldType
 {

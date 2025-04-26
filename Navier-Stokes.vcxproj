@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Constants.cpp" />
     <ClCompile Include="src\Navier-Stokes.cpp" />
     <ClCompile Include="src\Graphics\Brush.cpp" />
     <ClCompile Include="src\Graphics\LayerRenderer.cpp" />

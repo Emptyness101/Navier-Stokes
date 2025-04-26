@@ -36,6 +36,9 @@
     <ClCompile Include="src\Solver\Solver.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="src\Constants.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -69,6 +72,6 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\m.json" />
+    <None Include="src\Constants.json" />
   </ItemGroup>
 </Project>

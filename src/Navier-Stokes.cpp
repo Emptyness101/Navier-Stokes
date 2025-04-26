@@ -6,7 +6,6 @@
 #include <cstring>
 #include <fstream>
 
-
 #include "SFML/Graphics.hpp"
 
 #include "Constants.h"
@@ -17,16 +16,8 @@
 #include "LayerRenderer.h"
 #include "Solver.h"
 
-#include "Json.hpp"
-using json = nlohmann::json;	
-
 int main()
 {
-
-	std::ifstream f("src/m.json");
-	json data = json::parse(f);
-	std::cout << data["pi"];
-
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
 	window.setVerticalSyncEnabled(true);
 
