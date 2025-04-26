@@ -28,6 +28,8 @@ const float BRUSH_ATTENUATION_RATE = 0.001;
 //Time settings
 const float DELTA_TIME = 0.02;
 
+//Solver settings
+const float THRESHOLD_ALIGNMENT = 1e-5;
 const int velocityIterations = 50; 
 const float velocityDiffusion = 0.8f; 
 
@@ -39,9 +41,6 @@ const float vorticityStrength = 50.5f;
 
 //Attenuation settings
 const float ATTENUATION_COEFFICIENT = 0.99;
-
-//Threshold's
-const float THRESHOLD_ALIGNMENT = 1e-5;
 
 enum FieldType
 {
