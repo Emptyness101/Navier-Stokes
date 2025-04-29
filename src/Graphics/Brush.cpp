@@ -11,13 +11,15 @@ vec2 Brush::gauss_brush(float current_mouse_cell_x, float current_mouse_cell_y,
     float sigma = radius / 2.0;
     vec2 force = vec2(0, 0);
 
-    vec2 impulse = vec2(abs(dx), abs(dy));
+    vec2 impulse = vec2(dx, dy);
+
+    std::cout << impulse.x << " " << impulse.y << std::endl;
 
     //float weight = 1 / (sigma * sqrt(2 * M_PI)) * std::exp(-distance / (2 * sigma * sigma));
 
     force = impulse * power;
 
-    power = std::max(0.f, power - BRUSH_ATTENUATION_RATE);
+    power = 100;//std::max(0.f, power - BRUSH_ATTENUATION_RATE);
 
     return force;
 }
