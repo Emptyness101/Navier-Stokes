@@ -29,17 +29,16 @@ figure;
 hold on; 
 
 quiver(X, Y, U, V, 0.7, 'AutoScale', 'off', 'LineWidth', 2); 
-
 zeroIndices = (U == 0 & V == 0);
-plot(X(zeroIndices), Y(zeroIndices), 'ko', 'MarkerFaceColor', 'k', 'MarkerSize', 0.5);
 
+plot(X(zeroIndices), Y(zeroIndices), 'ko', 'MarkerFaceColor', 'k', 'MarkerSize', 0.5);
 xlabel('X');
 ylabel('Y');
+
 grid on;
 axis equal;
 
 set(gca, 'YDir', 'reverse');
-
 hold off;
 
 
