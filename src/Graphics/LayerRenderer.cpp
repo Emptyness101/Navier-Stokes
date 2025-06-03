@@ -11,8 +11,7 @@ sf::Sprite LayerRenderer::view_layer(Grid& grid, FieldType layerType)
         {
             double data = grid.get_field_data(*grid.cells[j + i * grid.width], layerType);
             max_data = std::max(max_data, data);
-            min_data = std::min(min_data, data);
-            grid.maxx = max_data;
+            min_data = 0.01;//std::min(min_data, data);
         }
     }
 

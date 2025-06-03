@@ -84,8 +84,8 @@ vec2 Solver::interpolate_velocity(const vec2& phys_pos, Grid& grid)
 {
     float x = phys_pos.x / PHYS_CELL_WIDTH;
     float y = phys_pos.y / PHYS_CELL_HEIGHT;
-
-    float x1 = std::floor(x);
+    //std::cout << x << " " << y << std::endl;
+    float x1 = std::floor(x); 
     float y1 = std::floor(y);
     float x2 = x1 + 1;
     float y2 = y1 + 1;
@@ -113,6 +113,8 @@ vec2 Solver::interpolate_velocity(const vec2& phys_pos, Grid& grid)
     vec2 f1 = q11->u * (1 - tx) + q21->u * tx;
     vec2 f2 = q12->u * (1 - tx) + q22->u * tx;
 
+
+
     return f1 * (1 - ty) + f2 * ty;
 }
 
@@ -120,7 +122,6 @@ vec2 Solver::jacobiVelocity(const Grid& grid, size_t x, size_t y, vec2 B, float 
 {
     vec2 vU = B * -1.0, vD = B * -1.0, vR = B * -1.0, vL = B * -1.0;
 
-    // Ïðîâåðÿåì ãðàíèöû è èçâëåêàåì ñêîðîñòü èç Cell
     auto get_velocity = [&](size_t x, size_t y) -> vec2
         {
             return grid.cells[y * grid.width + x]->u;
@@ -133,7 +134,6 @@ vec2 Solver::jacobiVelocity(const Grid& grid, size_t x, size_t y, vec2 B, float 
 
     return (vU + vD + vL + vR + B * alpha) * (1.0 / beta);
 }
-
 
 void Solver::diffuse(Grid& newGrid, const Grid& oldGrid, float vDiffusion, float dt)
 {
@@ -150,7 +150,6 @@ void Solver::diffuse(Grid& newGrid, const Grid& oldGrid, float vDiffusion, float
     }
 }
 
-
 void Solver::computeDiffusion(Grid& grid, float dt)
 {
     Grid tempGrid = grid;
@@ -161,7 +160,7 @@ void Solver::computeDiffusion(Grid& grid, float dt)
     }
 }
 
-float Solver::jacobiPressure(const Grid& grid, size_t x, size_t y, float B, float alpha, float beta) 
+float Solver::jacobiPressure(const Grid& grid, size_t x, size_t y, float div) 
 {
     float C = grid.cells[y * grid.width + x]->p;
     float xU = C, xD = C, xL = C, xR = C;
@@ -174,8 +173,9 @@ float Solver::jacobiPressure(const Grid& grid, size_t x, size_t y, float B, floa
     if (y < grid.height - 1) xD = get_pressure(x, y + 1);
     if (x > 0) xL = get_pressure(x - 1, y);
     if (x < grid.width - 1) xR = get_pressure(x + 1, y);
-
-    return (xU + xD + xL + xR + alpha * B) * (1.0f / beta);
+    double dxdx = PHYS_CELL_WIDTH * PHYS_CELL_WIDTH;
+    double dydy = PHYS_CELL_HEIGHT * PHYS_CELL_HEIGHT;
+    return -((dxdx * dydy) / (2 * (dxdx + dydy))) * (div - (xL + xR) / (dxdx) - (xU + xD)/(dydy));
 }
 
 float Solver::divergency(const Grid& grid, size_t x, size_t y) 
@@ -184,7 +184,7 @@ float Solver::divergency(const Grid& grid, size_t x, size_t y)
     float x1 = -uC.x, x2 = -uC.x, y1 = -uC.y, y2 = -uC.y;
 
     auto get_velocity = [&](size_t x, size_t y) -> vec2 {
-        return grid.cells[y * grid.width + x]->u;
+        return grid.cells[y * grid.width + x]->u; 
         };
 
     if (x < grid.width - 1) x1 = get_velocity(x + 1, y).x;
@@ -192,19 +192,17 @@ float Solver::divergency(const Grid& grid, size_t x, size_t y)
     if (y < grid.height - 1) y1 = get_velocity(x, y + 1).y;
     if (y > 0) y2 = get_velocity(x, y - 1).y;
 
-    return (x1 - x2 + y1 - y2) * 0.5f;
+    return (x1 - x2)/(2 * PHYS_CELL_WIDTH) + (y1 - y2) / (2 * PHYS_CELL_HEIGHT);
 }
 
 void Solver::computePressure(Grid& grid, float pressure, float dt) {
-    Grid tempGrid = grid; // Копия для итераций
+    Grid tempGrid = grid; 
 
     for (int i = 0; i < pressureIterations; i++) {
-        for (size_t y = 0; y < grid.height; ++y) {
-            for (size_t x = 0; x < grid.width; ++x) {
+        for (size_t y = 0; y < grid.height; y++) {
+            for (size_t x = 0; x < grid.width; x++) {
                 float div = divergency(grid, x, y);
-                float alpha = -pressure * pressure;
-                float beta = 4.0f;
-                tempGrid.cells[y * grid.width + x]->p = jacobiPressure(grid, x, y, div, alpha, beta);
+                tempGrid.cells[y * grid.width + x]->p = jacobiPressure(grid, x, y, div);
             }
         }
         std::swap(grid, tempGrid);

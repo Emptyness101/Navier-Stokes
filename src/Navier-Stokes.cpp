@@ -102,18 +102,17 @@ int main()
 		if (time_is_running)
 		{
 			//solver.velocity_attenuation(grid);
-
+			solver.advect(grid, DELTA_TIME, velocityDiffusionSP);
 			solver.computeDiffusion(grid, DELTA_TIME);
 
 			solver.computePressure(grid, pressure_c, DELTA_TIME);
 			solver.project(grid);
-			solver.advect(grid, DELTA_TIME, velocityDiffusionSP);
 
 			current_time += DELTA_TIME;
 		}
 
 
-		window.setTitle("Current time: " + std::to_string(grid.maxx));
+		window.setTitle("Current time: ");
 		window.clear();
 		window.draw(current_view_layer);
 		window.display();

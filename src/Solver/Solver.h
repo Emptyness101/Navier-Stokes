@@ -5,6 +5,11 @@
 
 struct Solver
 {
+
+    float r;
+    float g;
+    float b;
+
     void velocity_attenuation(Grid& grid);
     void set_force(Grid& grid, int cell_index, vec2 force, int radius);
 
@@ -15,7 +20,7 @@ struct Solver
     void diffuse(Grid& newGrid, const Grid& oldGrid, float vDiffusion, float dt);
     void computeDiffusion(Grid& grid, float dt);
 
-    float jacobiPressure(const Grid& grid, size_t x, size_t y, float B, float alpha, float beta);
+    float jacobiPressure(const Grid& grid, size_t x, size_t y, float B);
     float divergency(const Grid& grid, size_t x, size_t y);
     void computePressure(Grid& grid, float pressure, float dt);
     vec2 gradient(const Grid& grid, size_t x, size_t y);

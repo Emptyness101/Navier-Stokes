@@ -11,7 +11,6 @@
 struct Grid 
 {
     int width, height;
-    double maxx;
     std::vector<std::shared_ptr<Cell>> cells;
 
     Grid(int width, int height);
