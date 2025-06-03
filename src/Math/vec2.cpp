@@ -27,6 +27,8 @@ vec2 vec2::operator+(double other)
     return res;
 }
 
+
+
 vec2& vec2::operator+=(const vec2& other)
 {
     x += other.x;

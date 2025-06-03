@@ -19,7 +19,14 @@ vec2 Brush::gauss_brush(float current_mouse_cell_x, float current_mouse_cell_y,
 
     force = impulse * power;
 
-    power = 100;//std::max(0.f, power - BRUSH_ATTENUATION_RATE);
+    power = 1000;//std::max(0.f, power - BRUSH_ATTENUATION_RATE);
 
     return force;
+}
+
+double Brush::gauss_brush_scalar(float current_mouse_cell_x, float current_mouse_cell_y,
+    float start_mouse_cell_x, float start_mouse_cell_y)
+{
+    double power = 100;//std::max(0.f, power - BRUSH_ATTENUATION_RATE);
+    return power;
 }

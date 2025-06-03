@@ -56,6 +56,8 @@ double& Grid::get_field_data(Cell& cell, FieldType field_type)
         return cell.u.x;
     case YVelocity:
         return cell.u.y;
+    case Dye:
+        return cell.dye.x;
     default:
         throw std::invalid_argument("layer type error");
     }

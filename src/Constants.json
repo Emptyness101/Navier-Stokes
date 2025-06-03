@@ -2,19 +2,19 @@
   "Dimensions": {
     "Window": {
       "description": "Window dimensions in pixels",
-      "width": 500,
-      "height": 500
+      "width": 450,
+      "height": 450
     },
     "Field": {
       "Pixel": {
         "description": "Field height and width in pixels",
-        "width": 50,
-        "height": 50
+        "width": 150,
+        "height": 150
       },
       "Physical": {
         "description": "Field height and width in physical units",
-        "width": 50,
-        "height": 50
+        "width": 150,
+        "height": 150
       }
     }
   },
@@ -27,19 +27,19 @@
     "attenuation_rate": 0.001
   },
   "Time": {
-    "delta": 0.02
+    "delta": 0.01
   },
   "Solver": {
     "Iterations": {
       "description": "Iteration settings",
-      "velocity": 50,
-      "pressure": 40
+      "velocity": 20,
+      "pressure": 20
     },
     "Phys": {
         "description": "Fluid simulation parameters",
         "velocity_diffusion": 0.8,
         "velocity_diffusion_sp": 1.2,
-        "pressure_constant": 1,
+        "pressure_constant": 1.5,
         "vorticity_strength": 50.5
     },
     "Other": {

@@ -12,6 +12,8 @@ struct Cell
     double p;
     double rho;
 
+    vec2 dye;
+
     vec2 grad_p;
     double div_u;
     double rot_u;

@@ -26,7 +26,7 @@ int main()
 
 	Solver solver;
 	LayerRenderer layer;
-	FieldType current_layer = DEFAULT_FIELDTYPE;
+	FieldType current_layer = Dye;
 	sf::Sprite current_view_layer = layer.view_layer(grid, current_layer);
 	bool time_is_running = 0;
 
@@ -38,7 +38,7 @@ int main()
 
 	float current_time = 0;
 
-	FieldType out_type = Velocity;
+	FieldType out_type = Dye;
 
 	while (window.isOpen())
 	{
@@ -72,8 +72,12 @@ int main()
 				}
 
 				int cell_index = (FIELD_HEIGHT - 1 - current_mouse_cell_y) * FIELD_WIDTH + current_mouse_cell_x;
+
 				vec2 force = brush.gauss_brush(current_mouse_cell_x, current_mouse_cell_y, start_mouse_cell_x, start_mouse_cell_y);
+				double dye_production = brush.gauss_brush_scalar(current_mouse_cell_x, current_mouse_cell_y, start_mouse_cell_x, start_mouse_cell_y);
+
 				solver.set_force(grid, cell_index, force, brush.radius);
+				solver.set_dye(grid, cell_index, dye_production, brush.radius);
 				//std::cout << force.x << std::endl;
 				
 			}
@@ -103,6 +107,7 @@ int main()
 		{
 			//solver.velocity_attenuation(grid);
 			solver.advect(grid, DELTA_TIME, velocityDiffusionSP);
+
 			solver.computeDiffusion(grid, DELTA_TIME);
 
 			solver.computePressure(grid, pressure_c, DELTA_TIME);
@@ -112,7 +117,7 @@ int main()
 		}
 
 
-		window.setTitle("Current time: ");
+		window.setTitle("Current time: " + std::to_string(grid.maxx));
 		window.clear();
 		window.draw(current_view_layer);
 		window.display();

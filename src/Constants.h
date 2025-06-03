@@ -49,7 +49,8 @@ enum FieldType
     XVelocity,
     YVelocity,
     Pressure,
-    Density
+    Density, 
+    Dye
 };
 
 const FieldType DEFAULT_FIELDTYPE = Velocity;

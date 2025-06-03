@@ -16,5 +16,7 @@ struct Brush
 	Brush(int radius, float power);
 	vec2 gauss_brush(float current_mouse_cell_x, float current_mouse_cell_y,
 		float start_mouse_cell_x, float start_mouse_cell_y);
+	double gauss_brush_scalar(float current_mouse_cell_x, float current_mouse_cell_y,
+		float start_mouse_cell_x, float start_mouse_cell_y);
 };
 
